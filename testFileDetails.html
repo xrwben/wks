@@ -1,0 +1,50 @@
+<!--<!DOCTYPE html>-->
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>文件详情</title>
+		<link rel="stylesheet" href="css/common.css" />
+		<link rel="stylesheet" href="css/shadeModal.css" />
+		
+		<style>
+			#pdfBOX{width: 100%;height:100%;border:none;}
+			.iFrame{margin-top:-4px;height: 100%;}
+			.footer_button{width:100%;height:50px;background:rgba(0,0,0,0.5);
+				position: fixed;bottom: 0;text-align: center;}
+			.footer_button a{background: rgba(55, 193, 160, 1);
+				border-radius: 5px;margin-top:5px;color: #fff;font-size: 16px;
+				margin-right:15px;padding:10px 30px;display: inline-block;
+				cursor: pointer;}
+			.footer_button a._color{background: #8C8C8C;}
+			.modal_qm{width:100%;height:100%;margin: 0;padding: 0;border:0;
+				text-align: center;}
+			.modal_qm fieldset{height: 90%;border:1px solid #37C1A0;}
+			#signBox{height:100%;border:1px solid red;}
+			.modal a{background: rgba(55, 193, 160, 1);
+				border-radius: 5px;margin-top:5px;color: #fff;font-size: 16px;
+				margin-right:15px;padding:10px 30px;display: inline-block;
+				cursor: pointer;}
+		</style>
+	</head>
+	<body>
+		<!--http://www.51purse.com/pdf/web/viewer.html?name=b.pdf-->
+		<div id="pdfBOX">
+			<iframe class="iFrame" src="http://192.168.1.140:8080/file/contract/wks201704191953559.pdf" width="100%" height="100%" frameborder="0"></iframe>
+			<!--<div id="iFrame" class="iFrame"></div>-->
+		</div>
+		<p class="footer_button">
+			<a class="qm" href="javascript:void(0);">签名</a>
+		</p>
+
+		
+		
+		<script type="text/javascript" src="js/jquery-1.11.3.min.js" ></script>
+		<script type="text/javascript" src="js/serverURL.js" ></script>
+		<script type="text/javascript" src="plugins/jSignature/flashcanvas.js" ></script>
+		<script type="text/javascript" src="plugins/jSignature/jSignature.js" ></script>
+		<script type="text/javascript" src="js/pdfobject.js" ></script>
+		<script type="text/javascript">
+			
+		</script>
+	</body>
+</html>

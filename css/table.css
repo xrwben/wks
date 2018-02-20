@@ -1,0 +1,60 @@
+/*表格通用样式*/
+.table_pagination{height:40px;}
+.table_pagination ul{display: inline-block;margin-top:5px;float:left;}
+.table_pagination ul li{float:left;padding:5px 15px;border:1px solid #ccc;
+	margin-left: -1px;}
+.table_pagination ul li a{color:#000;}
+
+/*.pagePlugins{text-align: left;color: #ccc;float: left;margin-top:5px;}
+.pagePlugins a{display: inline-block;color: #37C1A0;display: inline-block;height: 25px;	line-height: 25px;	padding: 0 15px;margin-left:-1px;border: 1px solid #ccc;vertical-align: middle;}
+.pagePlugins a:hover{border-color:#37C1A0;}
+.pagePlugins span.current{display: inline-block;height: 25px;line-height: 25px;padding: 0 15px;margin-left:-1px;color: #fff;background-color: #37C1A0;padding: 0 15px;	border: 1px solid #ccc;vertical-align: middle;}
+.pagePlugins span.disabled{	display: inline-block;height: 25px;line-height: 25px;padding: 0 15px;color: #bfbfbf;background: #f2f2f2;border: 1px solid #ccc;vertical-align: middle;}*/
+
+.pagePlugins{float: left;text-align: left;margin-top:5px;}
+.pagePlugins a{display:inline-block;height:25px;line-height: 25px;
+	border: 1px solid #ccc;color: #37C1A0;padding: 0 10px;margin-left:-1px;}
+.pagePlugins span{display:inline-block;height:25px;line-height: 25px;
+	border: 1px solid #ccc;color: #37C1A0;padding: 0 10px;margin-left:-1px;}
+.pagePlugins span.current{color: #fff;
+	background-color: #37C1A0;height:25px;line-height: 25px;
+	border: 1px solid #ccc;}
+.pagePlugins .current.prev,.pagePlugins .current.next{color:#ccc;background:#fff;
+	height: 25px;line-height: 25px;}
+.pagePlugins input{line-height:20px;padding-top:2px;text-align: center;}
+.pagePlugins span:last-child{padding: 0;border:none;}
+
+.table_pagination > .pagination_num{line-height: 40px;margin:0px 0 0 30px;
+	float: left;}
+
+.sx{width:80px;height:30px;float: right;border:1px solid #37C1A0;margin-top:5px;
+	background: #fff;color: #37C1A0;font-size: 16px;margin-right: 15px;
+	border-radius: 5px;}
+.table_pagination .pagination_seach{float:right;border:1px solid #ccc;margin-top:5px;}
+.table_pagination .pagination_seach input{width:200px;height:30px;
+	float:left;border:none;text-indent: 5px;}
+.table_pagination .pagination_seach button{width: 30px;height: 30px;
+	border: none;background:url(../images/research.png) no-repeat center;
+	background-size: 20px 20px;float:left;outline: none;
+	cursor:pointer;}
+.table_con{border:1px solid #ccc;}
+.table_con table{text-align:center;background:#ccc;margin-top: 10px;
+	width: 100%;}
+.table_con table tr{height:35px;} 
+.table_con table tr th{background: #eee;font-weight: 400;/*padding:0 10px;*//*width: 50px;*/}
+.table_con table tr th:first-child{width:20px;}
+.table_con table tr th:last-child{width:100px;}
+.table_con table tr td{background: #fff;word-wrap:break-word;/*数据换行*/padding:0px 1px;}
+.table_con table tr td.bj_ck{font-size: 14px;padding:0px 10px;}
+.table_con table tr td.bj_ck a{color: #eee;background:#37C1A0;border-radius: 5px;
+	padding:2px 4px;display: inline-block;margin:2px 0px;}
+.table_con table tr td.bj_ck a.gray{background:#8C8C8C;cursor: not-allowed;}
+/*.table_con table tr td.bj_ck a img{width: 15px;height:15px;}*/
+
+.table_add{margin-top:15px;}
+.table_add a{background: rgba(55, 193, 160, 1);
+	border-radius: 5px;margin-top:15px;color: #fff;font-size: 16px;
+	margin-right:15px;padding:10px 30px;display: inline-block;
+	cursor: pointer;}
+
+.sm{margin-top: 15px;}

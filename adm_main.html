@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>首页</title>
+		<link rel="stylesheet" href="css/common.css" />
+		<link rel="stylesheet" href="css/main.css" />
+	</head>
+	<body>
+		<div class="container">
+			<div id="header">
+				<ul class="clearfix">
+					<li>
+						<div class="">
+							<p>入职/当月服务总人数</p>
+							<p><span class="ruzhi">0</span>人/<span class="serviceTotal">0</span>人</p>
+						</div>
+					</li>
+					<li>
+						<div class="">
+							<p>试用/当月服务总人数</p>
+							<p><span class="shiyong">0</span>人/<span class="serviceTotal">0</span>人</p>
+						</div>
+					</li>
+					<li>
+						<div class="">
+							<p>转正/当月服务总人数</p>
+							<p><span class="zhuangzheng">0</span>人/<span class="serviceTotal">0</span>人</p>
+						</div>
+					</li>
+					<li>
+						<div class="">
+							<p>离职/当月服务总人数</p>
+							<p><span class="lizhi">0</span>人/<span class="serviceTotal">0</span>人</p>
+						</div>
+					</li>
+				</ul>
+			</div>
+			<div id="main">
+				<ul class="clearfix">
+					<li>
+						<div class="entryTime">
+							<h2>⭕️入职办理时间段统计：</h2>
+							<div id="chart" style="width:100%;height:80%"></div>
+						</div>
+					</li>
+					<li>
+						<div class="empCounts">
+							<h2>⭕️在职统计：</h2>
+							<div id="chart_count" style="width:100%;height:80%"></div>
+						</div>
+					</li>
+					<li>
+						<div class="tips">
+							<h2>⭕️本月提示事项：</h2>
+							<ul>
+								<li><i></i><span>本月入职待办：<a class="findAllRuZhiDaiBan">0</a>个未处理</span></li>
+								<li><i></i><span>本月离职待办：<a class="findAllLiZhiDaiBan">0</a>个未处理</span></li>
+								<li><i></i><span>本月调动待办：<a class="findAllDiaoDongDaiBan">0</a>人，请注意调整薪资及社保信息</span></li>
+							</ul>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+		
+		
+		<script type="text/javascript" src="js/jquery-1.11.3.min.js" ></script>
+		<script type="text/javascript" src="js/serverURL.js" ></script>
+		<script type="text/javascript" src="js/servicePeople.js" ></script>
+		<script type="text/javascript" src="js/echarts.common.min.js" ></script>
+		<script type="text/javascript">
+			$(function(){
+       			findServicePeople();
+       			findFourCount();
+       			zzCount();
+       			findRuZhiTime();
+       			findAllRuZhiDaiBan();  //入职待办
+       			findAllLiZhiDaiBan();   //离职待办
+       			findAllDiaoDongDaiBan();  //调动待办
+       		})
+
+		</script>
+	</body>
+</html>

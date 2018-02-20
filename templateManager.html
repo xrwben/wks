@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>模板管理</title>
+		<link rel="stylesheet" href="css/common.css" />
+		<link rel="stylesheet" href="css/templateManagement.css" />
+		<style type="text/css">
+			
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<div class="header clearfix">
+				<div class="h_nav">
+					<h2>模板管理</h2>
+					<p><span>首页</span>/<span>设置</span>/<span>模板管理</span></p>
+				</div>
+			</div>
+			<div class="main">
+				<div class="mbgl">
+					<ul class="clearfix">
+						<li>
+							<p>员工入职审批表</p>
+							<form class="down" action="" method="get">
+								<button><span></span>下载<input type="submit" value="下载"></button>
+								<input id="file" type="hidden" name="file" value="员工入职审批表.pdf" />
+							</form>
+						</li>
+						<li>
+							<p>员工应聘登记表</p>
+							<form class="down" action="" method="get">
+								<button><span></span>下载<input type="submit" value="下载"></button>
+								<input id="file" type="hidden" name="file" value="员工应聘登记表.pdf" />
+							</form>
+						</li>
+						<li>
+							<p>员工入职承诺书</p>
+							<form class="down" action="" method="get">
+								<button><span></span>下载<input type="submit" value="下载"></button>
+								<input id="file" type="hidden" name="file" value="员工入职承诺书.pdf" />
+							</form>
+						</li>
+						<li>
+							<p>员工离职审批表</p>
+							<form class="down" action="" method="get">
+								<button><span></span>下载<input type="submit" value="下载"></button>
+								<input id="file" type="hidden" name="file" value="员工离职审批表.pdf" />
+							</form>
+						</li>
+						<li>
+							<p>员工离职申请表</p>
+							<form class="down" action="" method="get">
+								<button><span></span>下载<input type="submit" value="下载"></button>
+								<input id="file" type="hidden" name="file" value="员工离职申请表.pdf" />
+							</form>
+						</li>
+						<li>
+							<p>员工离职交接表</p>
+							<form class="down" action="" method="get">
+								<button><span></span>下载<input type="submit" value="下载"></button>
+								<input id="file" type="hidden" name="file" value="员工离职交接表.pdf" />
+							</form>
+						</li>
+						<li>
+							<p>员工调动审批单</p>
+							<form class="down" action="" method="get">
+								<button><span></span>下载<input type="submit" value="下载"></button>
+								<input id="file" type="hidden" name="file" value="员工调动审批单.pdf" />
+							</form>
+						</li>
+						<li>
+							<p>月度社保表</p>
+							<form class="down" action="" method="get">
+								<button><span></span>下载<input type="submit" value="下载"></button>
+								<input id="file" type="hidden" name="file" value="月度社保表.pdf" />
+							</form>
+						</li>
+						<li>
+							<p>月度考勤表</p>
+							<form class="down" action="" method="get">
+								<button><span></span>下载<input type="submit" value="下载"></button>
+								<input id="file" type="hidden" name="file" value="月度考勤表.pdf" />
+							</form>
+						</li>
+						<li>
+							<p>其它模板</p>
+							<form class="down" action="" method="get">
+								<button><span></span>下载<input type="submit" value="下载"></button>
+								<input id="file" type="hidden" name="file" value="其它模板.pdf" />
+							</form>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		
+		<script type="text/javascript" src="js/jquery-1.11.3.min.js" ></script>
+		<script type="text/javascript" src="js/serverURL.js" ></script>
+		<script type="text/javascript">
+			$(function(){
+				$(".down").attr("action",serverPath+"/wks/empfile/down?token=localStorage.getItem('token')");
+			})
+			
+		</script>
+	</body>
+</html>

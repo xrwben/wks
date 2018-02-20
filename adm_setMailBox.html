@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>设置邮箱</title>
+		<link rel="stylesheet" href="css/common.css" />
+		<link rel="stylesheet" href="css/modifyPassword.css" />
+		<style>
+			
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<div class="header clearfix">
+				<div class="h_nav">
+					<h2>设置邮箱</h2>
+					<p><span>首页</span>/<span>设置</span>/<span>设置邮箱</span></p>
+				</div>
+			</div>
+			<div class="main">
+				<div id="xgmm">
+					<form id="xgmm_form">
+						<div class="">
+							<input type="email" id="FROM_EMAIL" name="FROM_EMAIL" value="" placeholder="请输入发送邮箱名" />
+						</div>
+						<div class="">
+							<input type="email" id="EMAIL_USERNAME" name="EMAIL_USERNAME" value="" placeholder="请输入登录邮箱用户名"/>
+						</div>
+						<div class="">
+							<input type="password" id="EMAIL_PASSWORD" name="EMAIL_PASSWORD" value="" placeholder="请输入登录邮箱密码" />
+						</div>
+						<div class="commit">
+							<input type="button" value="设置邮箱" onclick="editEmail()"/>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		
+		<script type="text/javascript" src="js/jquery-1.11.3.min.js" ></script>
+		<script type="text/javascript" src="js/serverURL.js" ></script>
+		<script type="text/javascript" src="js/jquery.validate.min.js" ></script>
+		<script type="text/javascript" src="js/messages_zh.js" ></script>
+		<script type="text/javascript">
+			$(function(){
+				$.ajax({
+					type:"post",
+					url: serverPath + "/wks/user/readEmail",
+					headers:{"token":localStorage.getItem("token")},
+					success: function(result){
+						console.log(result);
+						if(result.success == "token"){
+							alert(result.msg);
+							window.parent.window.location.href = "login.html";
+						}else if(result.success){
+							$("#FROM_EMAIL").val(result.FROM_EMAIL);
+							$("#EMAIL_USERNAME").val(result.EMAIL_USERNAME);
+							$("#EMAIL_PASSWORD").val(result.EMAIL_PASSWORD);
+						}else{
+							alert(result.msg);
+						}
+					},
+					error: function(){
+						alert("系统网络异常！");
+					}
+				})
+			})
+			
+			//修改密码接口
+			function editEmail(){
+				$.ajax({
+					type:"post",
+					url: serverPath + "/wks/user/editEmail",
+					headers:{"token":localStorage.getItem("token")},
+					data :{"FROM_EMAIL":$("#FROM_EMAIL").val(),"EMAIL_USERNAME":$("#EMAIL_USERNAME").val(),"EMAIL_PASSWORD":$("#EMAIL_PASSWORD").val()},
+					success: function(result){
+						if(result.success == "token"){
+							alert(result.msg);
+							window.parent.window.location.href = "login.html";
+						}else if(result.success){
+							alert(result.msg);
+							window.location.reload();
+						}else{
+							alert(result.msg);
+						}
+					},
+					error: function(){
+						alert("系统网络异常！");
+					}
+				})
+			}
+		</script>
+	</body>
+</html>

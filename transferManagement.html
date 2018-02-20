@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>调动管理</title>
+		<link rel="stylesheet" href="css/common.css" />
+		<link rel="stylesheet" href="css/table.css" />
+		<link rel="stylesheet" href="css/shadeModal.css" />
+	</head>
+	<body>
+		<div class="container">
+			<div class="header clearfix">
+				<div class="h_nav">
+					<h2>调动管理</h2>
+					<p><span>首页</span>/<span>待办事项</span>/<span>调动管理</span></p>
+				</div>
+			</div>
+			<div class="main">
+				<div class="main_con ddgl">
+					<div class="table_pagination ddgl_pagination">
+						<div id="pagePlugins" class="pagePlugins"></div>
+						<div class="pagination_num">共<span class="jilu"></span>条记录，每页
+							<select>
+								<option value="5">5</option>
+								<option value="10">10</option>
+								<option value="15">15</option>
+								<option value="20">20</option>
+							</select>
+							条记录
+						</div>
+						<div class="pagination_seach">
+							<input id="keyWord" type="text" name="keywords" value="" placeholder="输入员工编号／姓名／身份证号"/>
+							<button class="pagination_seach_btn" onclick="Search()"></button>
+						</div>
+					</div>
+					<div class="table_con" style="overflow-x: auto;">
+						<table id="tableBox" class="" cellspacing="1" cellpadding="0" style="width: 150%;">
+							
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		
+		<script type="text/javascript" src="js/jquery-1.11.3.min.js" ></script>
+		<script type="text/javascript" src="js/serverURL.js" ></script>
+		<script type="text/javascript" src="js/dateFormat.js" ></script>
+		<script type="text/javascript" src="plugins/jquery.pagination.js" ></script>
+		
+		<script type="text/javascript">
+			var rows = $(".pagination_num select option:selected").val();  //每页显示数量
+			var keyword = $("#keyWord").val();  //获取搜索关键字
+			console.log(rows);
+			var currPage;  //当前页
+			var initFlag=true;  //标记
+			var _url = serverPath + '/wks/employee/list';
+			var _data = {"currPage":currPage+1,"currNum":rows,"keywords":keyword,"FIND_RUZHI_STATUS":'3'};
+			
+			$(function() {
+				PageCallback(0,null); 
+			});
+			$(".pagination_num select").change(function(){
+				initFlag=true;
+				rows = $(".pagination_num select option:selected").val();
+				PageCallback(0,null); 
+			});
+			//分页查询start
+			function PageCallback(currPage,jq){
+				_data.currPage = currPage + 1,
+				_data.currNum = rows,
+				$.ajax({
+					type:"POST",
+					url: _url,
+					data: _data,
+					headers:{token:localStorage.getItem("token")},
+					dataType:"JSON",
+					success:function(result){
+						console.log(result);
+						if(result.success == "token"){
+							alert(result.msg);
+							window.parent.window.location.href = "login.html";
+						}else if(result.success){
+							if(initFlag){
+								$("#pagePlugins").pagination(result.total,{
+									items_per_page:rows,
+									num_edge_entries:1,
+									num_display_entries:2,
+									callback:PageCallback
+								});
+								initFlag=false;
+							}
+							$(".jilu").text(result.total);
+							$("#tableBox").empty();
+							loadDataList(result.data,result.total);
+						}else{
+							alert(result.msg);
+						}
+					}
+				}); 
+			} 
+			//分页查询end
+			//表格载入数据start
+			function loadDataList(listData,total){
+				var tableTh = `<tr>
+								<th>序号</th>
+								<th>提报人</th>
+								<th>员工状态</th>
+								<th>调动类型</th>
+								<th>姓名</th>
+								<th>员工编号</th>
+								<th>身份证号</th>
+								<th>部门全称</th>
+								<th>总工资</th>
+								<th>执行时间</th>
+								<th>备注</th>
+								<th>&emsp;</th>
+							</tr>`;
+				$("#tableBox").append(tableTh);
+			 	var	html="";
+			 	for(var i=0;i<listData.length;i++){
+			 		var datas=listData[i];
+			 		if(datas.DIAODONG_DATE){
+						datas.DIAODONG_DATE = new Date(datas.DIAODONG_DATE).format("yyyy-MM-dd");
+					}
+			 		html += `<tr>
+								<td>${i+1}</td>
+								<td>${datas.FUWU_JL || ''}</td>
+								<td>${datas.RUZHI_STATUS || ''}</td>
+								<td>${datas.DIAODONG_TYPE || ''}</td>
+								<td>${datas.NAME || ''}</td>
+								<td>${datas.EMP_NUM || ''}</td>
+								<td>${datas.IDCARD || ''}</td>
+								<td>${datas.FIRST_DEP || ""}/${datas.SECOND_DEP || ""}/${datas.THIRD_DEP || ""}/${datas.DEPARTMENT || ""}</td>
+								<td>${datas.ZONG_GONGZI || ''}</td>
+								<td>${datas.DIAODONG_DATE || ''}</td>
+								<td>${datas.PERSONEL_BZ || ''}</td>
+								<td class="bj_ck">
+									<a href="editTransferManager.html?EMPLOYEE_ID=${datas.EMPLOYEE_ID}">编辑</a>
+									<a href="viewEmployee.html?EMPLOYEE_ID=${datas.EMPLOYEE_ID}">查看</a>
+								</td>
+							</tr>`;
+		 		}
+		 		$("#tableBox").append(html); 
+			}
+			//表格载入数据end
+			
+			//搜索功能
+			function Search(){
+				keyword = $("#keyWord").val();
+				_data = {"currPage":currPage+1,"currNum":rows,"keywords":keyword,"FIND_RUZHI_STATUS":'3'};
+				initFlag=true;
+				PageCallback(0);
+			}
+		</script>
+	</body>
+</html>

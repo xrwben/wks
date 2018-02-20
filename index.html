@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>美丽人才劳务派遣人力资源管理系统——首页</title>
+		<link rel="Shortcut Icon" href="images/favicon.png"  />
+		<link rel="stylesheet" href="css/common.css" />
+		<link rel="stylesheet" href="css/index.css" />
+	</head>
+	<body>
+		<div id="header">
+			<div class="header_logo">
+				美丽人才劳务派遣人力资源管理系统
+			</div>
+			<div class="logOut">
+				<div class="log_info clearfix">
+					<img src="images/login_logo.png"/>
+					<a href="javascript:void(0)"><span class="userName"></span>(<span class="roleId"></span>）<i></i></a>
+				</div>
+				<div class="log_select">
+					<p>
+						<a href="modifyPassword.html" target="show_pages">修改密码</a>
+					</p>
+					<p>
+						<a href="login.html" onclick="logOff()">退出登陆</a>
+					</p>
+				</div>
+			</div>
+		</div>
+		<!--
+        	作者：offline
+        	时间：2017-03-27
+        	描述：左侧导航面板
+        -->
+        <div id="mainCon">
+			<div id="siderPanel">
+				<div class="panel_logo">
+					<div class="pic_name clearfix">
+						<div class="pic">
+							<img src="images/login_logo.png" />
+						</div>
+						<div class="infomation">
+							<p class="userName"></p>
+							<p class="roleId"></p>
+						</div>
+					</div>
+				</div>
+				<div class="panel_content">
+					<ul>
+						<li class="curr">
+							<a href="main.html" target="show_pages"><img src="images/panel01.png"/>首页</a>
+						</li>
+						<li> 
+							<img src="images/panel02.png"/>员工管理<span></span>
+							<div class="list">
+								<p><a href="employeeInformation.html" target="show_pages">员工信息</a></p>
+								<!--<p><a href="employeeStatus.html" target="show_pages">员工状态</a></p>-->
+							</div>
+						</li>
+						<li> 
+							<img src="images/panel03.png"/>待办事项<span></span>
+							<div class="list" style="">
+								<p><a href="entryManagement.html" target="show_pages">入职管理</a></p>
+								<p><a href="leaveManagement.html" target="show_pages">离职管理</a></p>
+								<p><a href="transferManagement.html" target="show_pages">调动管理</a></p>
+							</div> 
+						</li>
+						<li> 
+							<img src="images/panel04.png"/>社保管理<span></span>
+							<div class="list">
+								<p><a href="monthlySocialSecurityManagement.html" target="show_pages">月度社保表管理</a></p>
+							</div>
+						</li>
+						<li> 
+							<img src="images/panel05.png"/>考勤管理<span></span>
+							<div class="list">
+								<p><a href="monthlyAttendanceSheetManagement.html" target="show_pages">月度考勤表管理</a></p>
+							</div>
+						</li>
+						<li> 
+							<img src="images/panel06.png"/>服务费管理<span></span>
+							<div class="list">
+								<p><a href="serviceFeeCollectList.html" target="show_pages">服务费收取名单</a></p>
+								<p><a href="serviceFeeSummary.html" target="show_pages">服务费汇总</a></p>
+							</div>
+						</li>
+						<li> 
+							<img src="images/panel02.png"/>设置<span></span>
+							<div class="list">
+								<p><a href="templateManager.html" target="show_pages">模板管理</a></p>
+								<p><a href="modifyPassword.html" target="show_pages">修改密码</a></p>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div id="showCon">
+				<iframe name="show_pages" src="main.html" height="100%" width="100%" frameborder="0"></iframe>
+			</div>
+		</div>
+		
+		
+		<script type="text/javascript" src="js/jquery-1.11.3.min.js" ></script>
+		<script type="text/javascript" src="js/jquery.cookie.js" ></script>
+		<script type="text/javascript" src="js/index.js" ></script>
+		<script type="text/javascript">
+			mainCon.style.height = document.body.clientHeight - 65 +"px";
+			window.onresize = function(){
+				var mainCon = document.getElementById("mainCon");
+				mainCon.style.height = document.body.clientHeight - 65 +"px";
+			}
+			//alert("屏幕宽："+document.body.clientWidth+"屏幕高："+document.body.clientHeight);
+		</script>
+
+	</body>
+</html>

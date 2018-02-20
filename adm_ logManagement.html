@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>日志管理</title>
+		<link rel="stylesheet" href="css/common.css" />
+		<link rel="stylesheet" href="css/table.css" />
+		<link rel="stylesheet" href="css/shadeModal.css" />
+		<style>
+			.modal p > input[type="date"]{width:150px;}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<div class="header clearfix">
+				<div class="h_nav">
+					<h2>日志管理</h2>
+					<p><span>首页</span>/<span>系统管理</span>/<span>日志管理</span></p>
+				</div>
+			</div>
+			<div class="main">
+				<div class="main_con zhgl">
+					<div class="table_pagination zhgl_pagination">
+						<div class="pagePlugins" id="pagePlugins"></div>
+						<div class="pagination_num">共<span class="jilu"></span>条记录，每页
+							<select name="currNum">
+								<option value="5">5</option>
+								<option value="10">10</option>
+								<option value="15">15</option>
+								<option value="20">20</option>
+							</select>
+							条记录
+						</div>
+						<div class="pagination_seach">
+							<input id="username" type="text" name="username" value="" placeholder="请输入操作人"/>
+							<button class="pagination_seach_btn" onclick="Search()"></button>
+						</div>
+						<button class="sx" onclick="showModal()">筛选</button>
+					</div>
+					<div class="table_con zhgl_table">
+						<table id="tableBox" class="" cellspacing="1" cellpadding="0">
+							
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="shade shade_sx">
+			<!--注册弹窗-->
+			<div class="modal modal_sx">
+				<div class="">
+					<form id="xs">
+						<h2>筛选</h2>
+						<p class="dateRange">
+							<b>开始日期：</b>
+							<input type="date" id="startTime" name="startTime" value=""/>
+						</p>
+						<p class="dateRange">
+							<b>结束日期：</b>
+							<input type="date" id="endTime" name="endTime" value=""/>
+						</p>
+						<p>
+							<input id="qx" type="button" value="取&emsp;消" onclick="closeModal()"/>
+							<input id="qd" type="button" value="确&emsp;定" onclick="selectInformation()"/>
+						</p>
+					</form>
+				</div>
+			</div>
+		</div>
+		
+		<script type="text/javascript" src="js/jquery-1.11.3.min.js" ></script>
+		<script type="text/javascript" src="plugins/jquery.pagination.js" ></script>
+		<script type="text/javascript" src="js/serverURL.js" ></script>
+		<script type="text/javascript">
+			var rows = $(".pagination_num select option:selected").val();  //每页显示数量
+			var currPage;
+			var keyword = $("#username").val();
+			var startTime = $("#startTime").val();
+			var endTime = $("#endTime").val();
+			//console.log(rows);
+			var initFlag=true; 
+			var _url = serverPath + '/wks/log/listByCondition';
+			var _data = {"currPage":currPage+1,"currNum":rows,"username":keyword,"startTime":startTime,"endTime":endTime};
+			$(function() {
+				PageCallback(0,null); 
+			});
+			$(".pagination_num select").change(function(){
+				initFlag=true;
+				rows = $(".pagination_num select option:selected").val();
+				PageCallback(0,null); 
+			});
+			//分页查询start
+			function PageCallback(currPage,jq){
+				_data.currPage = currPage + 1,
+				_data.currNum = rows,
+				$.ajax({
+					type:"POST",
+					url:_url,
+					headers:{token:localStorage.getItem("token")},
+					data:_data,
+					dataType:"JSON",
+					success:function(result){
+						console.log(result);
+						if(result.success == "token"){
+							alert(result.msg);
+							window.parent.window.location.href = "login.html";
+						}else if(result.success){
+							if(initFlag){
+								$("#pagePlugins").pagination(result.total,{
+									items_per_page:rows,
+									num_edge_entries:1,
+									num_display_entries:2,
+									callback:PageCallback
+								});
+								initFlag=false;
+							}
+							$(".jilu").text(result.total);
+							$("#tableBox").empty();
+							loadDataList(result.data,result.total);
+						}else{
+							alert(result.msg);
+						}
+					}
+				}); 
+			} 
+			//分页查询end
+			//表格载入数据start
+			function loadDataList(listData,total){
+				var tableTh = `<tr>
+								<th>序号</th>
+								<th>操作人账号</th>
+								<th>用户角色</th>
+								<th>日志内容</th>
+								<th>操作日期</th>
+							</tr>`;
+				$("#tableBox").append(tableTh);
+//			 	console.log(listData);
+//			 	console.log(listData.length);
+			 	var	html="";
+			 	for(var i=0;i<listData.length;i++){
+			 		var datas=listData[i];
+			 		//console.log(datas);
+			 		html += `<tr>
+			 					<td>${i+1}</td>
+								<td>${datas.USERNAME}</td>
+								<td>${datas.ROLE_NAME}</td>
+								<td>共办理了${datas.RUZHI}个员工的入职手续，${datas.LIZHI}个员工的离职手续，${datas.DIAODONG}个员工的调动手续。</td>
+								<td>${datas.logTime}</td>
+							</tr>`;
+		 		}
+		 		$("#tableBox").append(html); 
+			}
+			//表格载入数据end
+			
+			//搜索功能
+			function Search(){
+				keyword = $("#username").val();
+				startTime = $("#startTime").val();
+				endTime = $("#endTime").val();
+				_url = serverPath + '/wks/log/listByCondition';
+				_data = {"currPage":currPage+1,"currNum":rows,"username":keyword,"startTime":startTime,"endTime":endTime};
+				initFlag=true;
+				PageCallback(0);
+			}
+			//筛选功能
+			function selectInformation(){
+				keyword = $("#username").val();
+				startTime = $("#startTime").val();
+				endTime = $("#endTime").val();
+				_url = serverPath + '/wks/log/listByCondition';
+				_data = {"currPage":currPage+1,"currNum":rows,"username":keyword,"startTime":startTime,"endTime":endTime};
+				PageCallback(0);
+				closeModal();
+			}
+			//弹窗
+			function showModal(){
+				$(".shade").fadeIn();
+			}
+			//关闭弹窗
+			function closeModal(){
+				$(".shade").fadeOut();
+				$("#xs")[0].reset();
+			}
+			
+		</script>
+	</body>
+</html>

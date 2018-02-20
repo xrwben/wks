@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="Access-Control-Allow-Origin" content="*">
+		<title>调动管理编辑</title>
+		<link rel="stylesheet" href="css/common.css" />
+		<link rel="stylesheet" href="css/newEmployee.css" />
+		<style>
+			#loading{width:100%;height:100%;background:rgba(0,0,0,0.5);position: fixed;z-index:5;display: none;}
+			#loading img{position: absolute;left: 0;top:0;right:0;bottom: 0;margin: auto;}
+			.look{display: none;}
+			.part h3.subTiltle{font-size:16px;font-weight:600;}
+			
+			.part_con > div.wrap{margin-top:15px;}
+			.part_con > div.wrap > div.dd_left,.part_con > div.wrap > div.dd_right{
+				width:43%;display: inline-block;}
+			.part_con > div.wrap > div.dd_left{margin-right: 10%;}
+			.part_con > div.wrap input[type="text"],.part_con > div.wrap input[type="date"],.part_con p input[type="date"],.part_con > div.wrap select{width:100%;height:30px;border:1px solid #ccc;
+				display: block;margin-top:5px;outline: none;text-indent: 5px;}
+			.part_con > div.wrap em{color:red;margin-right: 5px;}				
+			span.error{color:red;font-size: 12px;}
+			.part_con p input:focus,.part_con p select:focus{border-color:#37C1A0;}
+		</style>
+	</head>
+	<body>
+		<!--友情提示-->
+		<div id="loading">
+			<img src="images/loading.gif"/>
+		</div> 
+		<div class="container">
+			<div class="header clearfix">
+				<div class="h_nav">
+					<h2>员工详情信息</h2>
+					<p><span>首页</span>/<span>待办事项</span>/<span>调动管理</span>/<span>编辑</span></p>
+				</div>
+				<div class="h_btn">
+					<button id="" class="" onclick="diaoDong()">调动提交</button>
+				</div>
+			</div>
+			<div class="main">
+				<ul class="nav clearfix">
+					<li class="hover">基本信息</li>
+					<li>薪酬信息</li>
+				</ul>
+				<form id="myForm">
+					<div class="nav_con">
+						<!--基本信息-->
+						<div class="tab con_baseInfo">
+							<!--调动附件-->
+							<input type="text" class="templet NAME showname" value="" readonly style="border:0;font-size: 24px;font-weight: bold;" />
+							<div class="part part1">
+								<h3>
+									<i style="font-family:'Arial-BoldMT', 'Arial Bold', 'Arial';color:#00CC99;">▼</i>调动附件
+									<img src="images/bianji.png"><span>编辑</span>
+								</h3>
+								<div class="upload">
+									<!--<form id="">-->
+										<p class="file1">
+											<em>*</em>调动审批：<button type="button"><b class="_ddsp">点击上传</b><input id="ddsp" name="14" type="file" accept="image/jpeg,image/png" onchange="addUpload('14','#ddsp','_ddsp')" required/></button>
+											<span class="look" onclick="Look(14)"><img src="images/check.png"/>查看</span>
+											<em>*必须先上传成功才能继续操作</em>
+										</p>
+										<p class="file1">
+											<em></em>调动申请：<button type="button"><b class="_ddsq">点击上传</b><input id="ddsq" name="15" type="file" accept="image/jpeg,image/png" onchange="addUpload('15','#ddsq','_ddsq')" /></button>
+											<span class="look" onclick="Look(15)"><img src="images/check.png"/>查看</span>
+										</p>
+									<!--</form>-->
+								</div>
+							</div>
+							
+							<!--岗位信息-->
+							<div class="part part3 hide">
+								<h3>
+									<i style="font-family:'Arial-BoldMT', 'Arial Bold', 'Arial';color:#00CC99;">▼</i>岗位信息
+									<img src="images/bianji.png"><span>编辑</span>
+								</h3>
+								<div class="part_con">
+										<div class="wrap">
+											<div class="dd_left">
+												<label><em>*</em>员工编号：</label>
+												<input type="text" class="templet EMP_NUM" name="EMP_NUM" value="自动生成" readonly/>
+											</div>
+										</div>
+										<!--<div class="wrap">
+											<div class="dd_left">
+												<label><em>*</em>员工状态：</label>
+												<input type="text" class="templet RUZHI_STATUS" name="RUZHI_STATUS" value="调动" readonly/>
+												<!--<select class="templet RUZHI_STATUS" name="RUZHI_STATUS ">
+													<option value="调动" selected>调动</option>
+												</select>
+											</div>
+										</div>-->
+										<div class="wrap">
+											<div class="dd_left">
+												<label><em>*</em>调动类型：</label>
+												<select class="templet DIAODONG_TYPE" name="DIAODONG_TYPE">
+													<option value="转正">转正</option>
+													<option value="调薪">调薪</option>
+													<option value="调岗">调岗</option>
+													<option value="调薪调岗">调薪调岗</option>
+													<option value="平调">平调</option>
+													<option value="晋升">晋升</option>
+													<option value="降级">降级</option>
+													<option value="架构调整">架构调整</option>
+													<option value="其它">其它</option>
+												</select>
+											</div>
+										</div>
+										<div class="wrap">
+											<div class="dd_left">
+												<label><em>*</em>调动审批人：</label>
+												<input type="text" id="spr" class="templet DIAODONG_AGREE_MAN" name="DIAODONG_AGREE_MAN" onchange="judgeSPR()" value="" required/>
+											</div>
+										</div>
+										<div class="wrap">
+											<div class="dd_left">
+												<label><em>*</em>调动日期：</label>
+												<input type="date" class="templet DIAODONG_DATE" name="DIAODONG_DATE" value="" required/>
+											</div>
+										</div>
+										<div class="wrap">
+											<div class="dd_left">
+												<p class="ygbmgm">
+													<label><em>*</em>员工部门编码：</label>
+													<input id="bmCode" type="text" class="templet LAST_DEP_NUM" name="LAST_DEP_NUM" value="" required onkeyup="findCode()"/>
+													<ul id="bmCodeList">
+													</ul>
+												<p>
+											</div>
+											<div class="dd_right">
+												<label><em>*</em>员工部门编码：</label>
+												<input type="text" class="templet LAST_DEP_NUM" value="" readonly/>
+											</div>
+										</div>
+										<div class="wrap">
+											<div class="dd_left">
+												<label><em>*</em>部门：</label>
+												<input id="Department" type="text" class="templet DEPARTMENT" name="DEPARTMENT" value="" readonly/>
+											</div>
+											<div class="dd_right">
+												<label><em>*</em>部门：</label>
+												<input type="text" class="templet DEPARTMENT" value=""/>
+											</div>
+										</div>
+										<div class="wrap">
+											<div class="dd_left">
+												<label><em>*</em>岗位：</label>
+												<select id="Post" class="templet POST_NAME" name="POST_NAME">
+													
+												</select>
+												<!--<input type="text" class="templet POST_NAME" value=""/>-->
+											</div>
+											<div class="dd_right">
+												<label><em>*</em>岗位：</label>
+												<input type="text" class="templet POST_NAME" value=""/>
+											</div>
+										</div>
+										<div class="wrap">
+											<div class="dd_left">
+												<label><em>*</em>职级：</label>
+												<select id="ZHIJI" class="templet ZHIJI" name="ZHIJI">
+													
+												</select>
+											</div>
+											<div class="dd_right">
+												<label><em>*</em>职级：</label>
+												<input type="text" class="templet ZHIJI" value=""/>
+											</div>
+										</div>
+										<div class="wrap">
+											<div class="dd_left">
+												<label>职等：</label>
+												<input type="text" class="templet ZHIDENG" name="ZHIDENG" value=""/>
+											</div>
+											<div class="dd_right">
+												<label>职等：</label>
+												<input type="text" class="templet ZHIDENG" value=""/>
+											</div>
+										</div>
+										<div class="wrap">
+											<div class="dd_left">
+												<label><em>*</em>出勤方式：</label>
+												<select class="templet REST_TYPE" name="REST_TYPE">
+													<option value="双休">双休</option>
+													<option value="单休">单休</option>
+													<option value="长短周">长短周</option>
+												</select>
+											</div>
+											<div class="dd_right">
+												<label><em>*</em>出勤方式：</label>
+												<select class="templet REST_TYPE" >
+													<option value="双休">双休</option>
+													<option value="单休">单休</option>
+													<option value="长短周">长短周</option>
+												</select>
+											</div>
+										</div>
+										<div class="wrap">
+											<div class="dd_left">
+												<label><em>*</em>服务类别：</label>
+												<select class="templet SERVICE_TYPE">
+													<option value="A1类">A1类</option>
+													<option value="A类">A类</option>
+													<option value="B类">B类</option>
+													<option value="C类">C类</option>
+													<option value="兼职类">兼职类</option>
+													<option value="停薪留职类">停薪留职类</option>
+												</select>
+											</div>
+											<div class="dd_right">
+												<label><em>*</em>服务类别：</label>
+												<select class="templet SERVICE_TYPE" name="SERVICE_TYPE">
+													<option value="A1类">A1类</option>
+													<option value="A类">A类</option>
+													<option value="B类">B类</option>
+													<option value="C类">C类</option>
+													<option value="兼职类">兼职类</option>
+													<option value="停薪留职类">停薪留职类</option>
+												</select>
+											</div>
+										</div>
+										<div class="wrap">
+											<div class="dd_left">
+												<label><em>*</em>考勤城市：</label>
+												<!--<input type="text" class="templet WORK_CITY"  name="WORK_CITY" value="" />-->
+												<select class="select_kqcs templet WORK_CITY" name="WORK_CITY" required>
+												</select>
+											</div>
+											<div class="dd_right">
+												<label><em>*</em>考勤城市：</label>
+												<input type="text" class="templet WORK_CITY" value="" />
+											</div>
+										</div>
+										<div class="wrap">
+											<div class="dd_left">
+												<label><em>*</em>服务经理：</label>
+												<!--<input type="text" class="templet FUWU_JL"  name="FUWU_JL" value="" />-->
+												<select class="templet FUWU_JL" name="FUWU_JL" id="FUWU_JL">
+												</select>
+											</div>
+											<div class="dd_right">
+												<label><em>*</em>服务经理：</label>
+												<input type="text" class="templet FUWU_JL" value="" />
+											</div>
+										</div>
+								</div>
+							</div>
+						
+						</div>
+						<!--薪酬信息-->
+						<div class="tab con_salaryInfo" style="display: none;" >
+							<input type="text" class="templet NAME showname" value="" readonly style="border:0;font-size: 24px;font-weight: bold;" />
+							<div class="part part1 hide">
+								<h3 class="subTiltle">
+									<i style="font-family:'Arial-BoldMT', 'Arial Bold', 'Arial';color:#00CC99;">▼</i>调动后薪资
+									<img src="images/tiaozheng.png"><span>调整</span>
+									<em>*注意确认总额和日工资</em>
+								</h3>
+								<div class="part_con">
+										<p>
+											<label><em>*</em>底薪类</label>
+											<table class="dxl"cellspacing="1" cellpadding="0">
+												<tr>
+													<th>基本工资</th>
+													<th>岗位工资</th>
+													<th>兼职工资</th>
+													<th>技术工资</th>
+													<th>其他</th>
+													<th>底薪总额</th>
+												</tr>
+												<tr>
+													<td><input type="text" class="jsdx BASE_SALARY" name="BASE_SALARY" value="0" onkeyup="calculateZDX()"></td>
+													<td><input type="text" class="jsdx POST_SALARY" name="POST_SALARY" value="0" onkeyup="calculateZDX()"></td>
+													<td><input type="text" class="jsdx PART_SALARY" name="PART_SALARY" value="0" onkeyup="calculateZDX()"></td>
+													<td><input type="text" class="jsdx JISHU_SALARY" name="JISHU_SALARY" value="0" onkeyup="calculateZDX()"></td>
+													<td><input type="text" class="jsdx DIXIN_OTHER" name="DIXIN_OTHER" value="0" onkeyup="calculateZDX()"></td>
+													<td><input type="text" class="zong_dixin ZONG_DIXIN" name="ZONG_DIXIN" value="0"></td>
+												</tr>
+											</table>
+										</p>
+										<p>
+											<label><em>*</em>补助类</label>
+											<table class="dxl"cellspacing="1" cellpadding="0">
+												<tr>
+													<th>通讯补助</th>
+													<th>住宿补助</th>
+													<th>交通补助</th>
+													<th>餐饮补助</th>
+													<th>种子外交官补助</th>
+													<th>技术组长补助</th>
+													<th>全勤标准</th>
+													<th>全勤补助</th>
+													<th>外派补助</th>
+													<th>驻外补助</th>
+													<th>其它补助</th>
+													<th>总补助</th>
+												</tr>
+												<tr>
+													<td><input type="text" class="jsbz TONGXUN" name="TONGXUN" value="0" onkeyup="calculateZBZ()"></td>
+													<td><input type="text" class="jsbz ZHUSU" name="ZHUSU" value="0" onkeyup="calculateZBZ()"></td>
+													<td><input type="text" class="jsbz JIAOTONG" name="JIAOTONG" value="0" onkeyup="calculateZBZ()"></td>
+													<td><input type="text" class="jsbz CHIYIN" name="CHIYIN" value="0" onkeyup="calculateZBZ()"></td>
+													<td><input type="text" class="jsbz ZHONGZI" name="ZHONGZI" value="0" onkeyup="calculateZBZ()"></td>
+													<td><input type="text" class="jsbz JISHU" name="JISHU" value="0" onkeyup="calculateZBZ()"></td>
+													<td><input type="text" class="jsbz QUANQIN" name="QUANQIN" value="0" onkeyup="calculateZBZ()"></td>
+													<td><input type="text" class="jsbz QUANQINBUZHU" name="QUANQINBUZHU" value="0" onkeyup="calculateZBZ()"></td>
+													<td><input type="text" class="jsbz WAIPAI" name="WAIPAI" value="0" onkeyup="calculateZBZ()"></td>
+													<td><input type="text" class="jsbz ZHUWAI" name="ZHUWAI" value="0" onkeyup="calculateZBZ()"></td>
+													<td><input type="text" class="jsbz BUZHU_OTHER" name="BUZHU_OTHER" value="0" onkeyup="calculateZBZ()"></td>
+													<td><input type="text" class="zong_buzhu ZONG_BUZHU" name="ZONG_BUZHU" value="0"></td>
+												</tr>
+											</table>
+										</p>
+										<p>
+											<label><em>*</em>绩效工资：</label>
+											<input type="text" class="templet JIXIAO_SALARY" name="JIXIAO_SALARY" />
+										</p>
+										<p>
+											<label><em></em>保底提成：</label>
+											<input type="text" class="templet TICHENG_SALARY" name="TICHENG_SALARY" />
+										</p>
+										<p>
+											<label><em>*</em>工资总额：</label>
+											<input type="text" class="templet ZONG_GONGZI" name="ZONG_GONGZI" />
+										</p>
+										<p>
+											<label><em>*</em>日工资：</label>
+											<input type="text" class="templet day_salary DAY_SALARY" name="DAY_SALARY" />
+										</p>
+										<p>
+											<label>调动补充说明：</label>
+											<textarea cols="60" rows="5" class="templet SALARY_INTROD" name="SALARY_INTROD"></textarea>
+										</p>
+								</div>
+							</div>
+							<div class="part part2 hide">
+								<h3 class="subTiltle">
+									<i style="font-family:'Arial-BoldMT', 'Arial Bold', 'Arial';color:#00CC99;">▼</i>旧薪资
+									<img src="images/bianji.png"><span>编辑</span>
+								</h3>
+								<div class="part_con">
+									<p>
+										<label>*底薪类</label>
+										<table class="dxl"cellspacing="1" cellpadding="0">
+											<tr>
+												<th>基本工资</th>
+												<th>岗位工资</th>
+												<th>兼职工资</th>
+												<th>技术工资</th>
+												<th>其他</th>
+												<th>底薪总额</th>
+											</tr>
+											<tr>
+												<td><input type="text" class="templet BASE_SALARY" value="0" readonly></td>
+												<td><input type="text" class="templet POST_SALARY" value="0" readonly></td>
+												<td><input type="text" class="templet PART_SALARY"  value="0" readonly></td>
+												<td><input type="text" class="templet JISHU_SALARY" value="0" readonly></td>
+												<td><input type="text" class="templet DIXIN_OTHER" value="0" readonly></td>
+												<td><input type="text" class="templet ZONG_DIXIN"  value="0" readonly></td>
+											</tr>
+										</table>
+									</p>
+									<p>
+										<label>*补助类</label>
+										<table class="dxl"cellspacing="1" cellpadding="0">
+											<tr>
+												<th>通讯补助</th>
+												<th>住宿补助</th>
+												<th>交通补助</th>
+												<th>餐饮补助</th>
+												<th>种子外交官补助</th>
+												<th>技术组长补助</th>
+												<th>全勤标准</th>
+												<th>全勤补助</th>
+												<th>外派补助</th>
+												<th>驻外补助</th>
+												<th>其它补助</th>
+												<th>总补助</th>
+											</tr>
+											<tr>
+												<td><input type="text" class="templet TONGXUN" value="0" readonly></td>
+												<td><input type="text" class="templet ZHUSU"  value="0" readonly></td>
+												<td><input type="text" class="templet JIAOTONG" value="0" readonly></td>
+												<td><input type="text" class="templet CHIYIN" value="0" readonly></td>
+												<td><input type="text" class="templet ZHONGZI"  value="0" readonly></td>
+												<td><input type="text" class="templet JISHU" value="0" readonly></td>
+												<td><input type="text" class="templet QUANQIN"  value="0" readonly></td>
+												<td><input type="text" class="templet QUANQINBUZHU" value="0" readonly></td>
+												<td><input type="text" class="templet WAIPAI" value="0" readonly></td>
+												<td><input type="text" class="templet ZHUWAI" value="0" readonly></td>
+												<td><input type="text" class="templet BUZHU_OTHER" value="0" readonly></td>
+												<td><input type="text" class="ZONG_BUZHU" value="0"></td>
+											</tr>
+										</table>
+									</p>
+									<p>
+										<label><em>*</em>绩效工资：</label>
+										<input type="text" class="templet JIXIAO_SALARY" readonly/>
+									</p>
+									<p>
+										<label><em>*</em>保底提成：</label>
+										<input type="text" class="templet TICHENG_SALARY" readonly />
+									</p>
+									<p>
+										<label><em>*</em>工资总额：</label>
+										<input type="text" class="templet ZONG_GONGZI" readonly />
+									</p>
+									<p>
+										<label><em>*</em>日工资：</label>
+										<input type="text" class="templet DAY_SALARY" readonly />
+									</p>
+									<p>
+										<label>调动补充说明：</label>
+										<textarea cols="60" rows="5" class="templet SALARY_INTROD"readonly></textarea>
+									</p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		
+		<style>
+			.showImage{width:100%;/*height:100%;*/background:rgba(0,0,0,0.8);position: fixed;left: 0;top:0;
+				display: none;}
+			.pic{width:95%;margin:2% auto;}
+			.pic img{width: 100%;height: 100%;}
+		</style>
+		<!--查看图片-->
+		<div class="showImage">
+			<div class="pic">
+				<img src="" />
+			</div>
+		</div>
+		
+		
+		<script type="text/javascript" src="js/jquery-1.11.3.min.js" ></script>
+		<script type="text/javascript" src="js/serverURL.js" ></script>
+		<script type="text/javascript" src="js/dateFormat.js" ></script>
+		<script type="text/javascript" src="js/jquery.cookie.js" ></script>
+		<script type="text/javascript" src="js/jquery.validate.min.js" ></script>
+		<script type="text/javascript" src="js/messages_zh.js" ></script>
+		<script type="text/javascript" src="js/tab.js" ></script>
+		<script type="text/javascript" src="js/newEmpFormValidate.js" ></script>
+		<script type="text/javascript" src="js/pdfFormValidate.js" ></script>
+		<script type="text/javascript" src="js/newEmp.js" ></script>
+		<script type="text/javascript" src="js/lookPicture.js" ></script>
+		<script type="text/javascript" src="js/calculate.js" ></script>
+		
+		<script type="text/javascript">
+			var resultData = null;
+			console.log(resultData);
+			$(function(){
+				//请求公司、城市、职级数据
+				companyListAll();
+				cityListAll();
+				zhijiListAll();
+				userListAll();
+				var _url = window.location.href; //拿到地址
+				var parameter = _url.split("=")[1]; //分割字符创变成数组取得传过来的id
+				$.ajax({
+					type : "post",
+					url :　serverPath+"/wks/employee/findById",
+					headers:{token:localStorage.getItem("token")},
+					data : {"EMPLOYEE_ID":parameter},
+					dataType:"JSON",
+					success : function(result){
+						resultData = result;
+						console.log(resultData);
+						console.log(resultData.data);
+						if(result.success == "token"){
+							alert(result.msg);
+							window.parent.window.location.href = "login.html";
+						}else if(result.success){
+							
+							if(result.data.DIAODONG_DATE){
+								result.data.DIAODONG_DATE = new Date(result.data.DIAODONG_DATE).format("yyyy-MM-dd");
+							}
+							
+							//判断pdf是否生成
+							if(result.data.PDF_SERVICE_URL){
+								$(".makePDF").addClass("_color").text("已生成PDF").removeAttr("onclick");
+							}
+							//填入数据
+							for(var prop in result.data){
+								$("."+prop).val(result.data[prop]);
+							}
+							//根据员工编码发送请求
+							findCode(result.data['POST_NAME']);
+							
+							//数据插入后右边disabled
+							$(".dd_right input,.dd_right select").attr("disabled","disabled");
+							//判断文件是否存在
+							fileExist();
+						}else{
+							alert(result.msg);
+						}
+					},
+					error : function(){
+						alert("系统网络异常！");
+					}
+				})	
+			});
+			//点击岗位加载信息
+//			function showPostName(){
+//				findCode();
+//			}
+			
+			
+		    //切换tab页显示名字
+			function showName(){
+				console.log($(".bjName").val());
+				$(".tab .showname").val($(".bjName").val());
+			}
+			
+			//判断是否存在审批人
+			function judgeSPR(){
+				$.ajax({
+					type:"post",
+					url: serverPath + "/wks/employee/findByName",
+					headers:{token:localStorage.getItem("token")},
+					data:{"NAME":$("#spr").val()},
+					dataType:"json",
+					success: function(result){
+						if(result.success == "token"){
+							alert(result.msg);
+							window.parent.window.location.href = "login.html";
+						}else if(result.success && result.msg == "no"){
+							alert("审批人输错或不存在，请重新输入！");
+						}
+					},
+					error: function(){
+						alert("系统网络异常！");
+					}
+				});
+			}
+			
+			//提交调动数据
+		    function diaoDong(){
+		    	if(validFormPdf().form()) {
+			        //通过表单验证，以下编写自己的代码
+			        //console.log("生成文件!");
+					var fd = new FormData($("#myForm")[0]);
+					fd.append("EMPLOYEE_ID",resultData.data.EMPLOYEE_ID);
+					fd.append("EMPFILE_ID",resultData.data.EMPFILE_ID);
+					console.log(resultData.data.EMPFILE_ID);
+			    	$.ajax({
+			    		type:"post",
+			    		url:serverPath+"/wks/employee/diaodong",
+			    		headers:{token:localStorage.getItem("token")},
+			    		data: fd,
+			    		dataType : "json",
+						cache : false,
+						contentType :　false,
+						processData: false,
+			    		success: function(result){
+			    			console.log(result);
+			    			if(result.success == "token"){
+								alert(result.msg);
+								window.parent.window.location.href = "login.html";
+							}else if(result.success){
+								alert(result.msg);
+			    				window.location.href = "employeeInformation.html";
+			    			}else{
+			    				alert(result.msg);
+			    			}
+			    		},
+			    		error: function(){
+			    			console.log("系统网络异常!");
+			    		}
+			    	});
+			    } else {
+			    	alert("请完善调动信息！");
+			        //校验不通过，什么都不用做，校验信息已经正常显示在表单上
+			    }
+		    }
+			
+			
+		</script>
+	</body>
+</html>

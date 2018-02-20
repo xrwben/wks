@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>文件详情</title>
+		<link rel="stylesheet" href="css/common.css" />
+		<link rel="stylesheet" href="css/shadeModal.css" />
+		
+		<style>
+			#pdfBOX{width: 100%;height:100%;border:none;}
+			.iFrame{margin-top:-4px;height: 100%;}
+			.footer_button{width:100%;height:50px;background:rgba(0,0,0,0.5);
+				position: fixed;bottom: 0;text-align: center;}
+			.footer_button a{background: rgba(55, 193, 160, 1);
+				border-radius: 5px;margin-top:5px;color: #fff;font-size: 16px;
+				margin-right:15px;padding:10px 30px;display: inline-block;
+				cursor: pointer;}
+			.footer_button a._color{background: #8C8C8C;}
+			.modal_qm{width:100%;height:100%;margin: 0;padding: 0;border:0;
+				text-align: center;}
+			.modal_qm fieldset{height: 90%;border:1px solid #37C1A0;}
+			#signBox{height:100%;}
+			.modal a{background: rgba(55, 193, 160, 1);
+				border-radius: 5px;margin-top:5px;color: #fff;font-size: 16px;
+				margin-right:15px;padding:10px 30px;display: inline-block;
+				cursor: pointer;}
+				
+			#loading{width:100%;height:100%;background:rgba(0,0,0,0.5);position: fixed;z-index:5;display: none;}
+			#loading img{position: absolute;left: 0;top:0;right:0;bottom: 0;margin: auto;}
+		</style>
+	</head>
+	<body>
+		<!--友情提示-->
+		<div id="loading">
+			<img src="images/loading.gif"/>
+		</div>
+		<!--http://www.51purse.com/pdf/web/viewer.html?name=b.pdf-->
+		<div id="pdfBOX">
+		<!--	<iframe class="iFrame" src="http://192.168.1.140:8080/file/contract/wks201704191953559.pdf" width="100%" height="100%" frameborder="0"></iframe>-->
+			<!-- <div id="iFrame1" class="iFrame">
+				<img alt="" src="">
+			</div>  -->
+			<div id="iFrame1" class="" >
+			</div> 
+			
+		</div>
+		<p class="footer_button">
+			<a class="qm" href="javascript:void(0);">签名</a>
+			<a class="fh" href="javascript:void(0);" onclick="javascript:history.back(-1)">返回</a>
+		</p>
+
+		<div class="shade shade_qm">
+			<!--注册弹窗-->
+			<div class="modal modal_qm">
+				<fieldset>
+					<legend>签名区域</legend>
+					<div id="signBox"></div>
+					<div class="saveBox" style="display: none;"></div>
+				</fieldset>
+				<a id="cxqm" href="javascript:void(0);" onclick="reset()">重新签名</a>
+				<a id="qd" href="javascript:void(0);" onclick="saveImg()">确定</a>
+			</div>
+		</div>
+		
+		<script type="text/javascript" src="js/jquery-1.11.3.min.js" ></script>
+		<script type="text/javascript" src="js/serverURL.js" ></script>
+		<script type="text/javascript" src="plugins/jSignature/flashcanvas.js" ></script>
+		<script type="text/javascript" src="plugins/jSignature/jSignature.js" ></script>
+		<script type="text/javascript" src="js/pdfobject.js" ></script>
+		<script type="text/javascript">
+			var resultData;
+			$(function(){
+				var _url = window.location.href; //拿到地址
+				var parameter = _url.split("=")[1]; //分割字符创变成数组取得传过来的id
+				console.log(parameter);
+				
+				$.ajax({
+					type:"post",
+					url: serverPath+"/wks/emppdf/pdfService",
+					headers:{token:localStorage.getItem("token")},
+					data:{"EMPLOYEE_ID":parameter},
+					beforeSend:function(){
+						$("#loading").show();
+					},
+					success: function(result){
+						resultData = result;
+						console.log(resultData);
+						if(result.success == "token"){
+							alert(result.msg);
+							window.parent.window.location.href = "login.html";
+						}else if(result.success){
+							//$(".iFrame").attr("src",result.data.PDF_SERVICE_URL);
+
+//							var success = new PDFObject({ url: result.data.PDF_SERVICE_URL }).embed("iFrame");
+//							alert(result.data.PDF_SERVICE_URL);
+
+							var urls=result.paths;
+							console.log(urls);
+							for(var i=0;i<urls.length;i++){
+								var img="<img src='"+urls[i]+"' style='width:100%;'>";
+								$("#iFrame1").append(img);
+							}
+							//var success = new PDFObject({ url: result.data.PDF_SERVICE_URL }).embed("iFrame1");
+							
+							//判断是否签名
+							if(result.data.PDF_SIGN_URL){
+								$(".qm").addClass("_color").text("已签名").unbind();
+							}
+						}else{
+							alert("查看PDF文件出错！");
+						}
+					//	console.log($("#iFrame"))
+					},
+					complete: function(){
+				     	$("#loading").hide();
+				    },
+					error:function(){
+						alert("系统网络异常！");
+					}
+				});
+				
+				$(".qm").click(function(){
+					$(".shade").show();
+					$("#signBox").jSignature();
+				});
+				
+			});
+		
+			
+			//重置
+			function reset() {
+	            $("#signBox").jSignature("reset");
+	        }
+			//确定签名
+			function saveImg() {
+				var btn = window.confirm("请确认是否签名！");
+				if(btn == true){
+		            var $signBox = $("#signBox");
+		            var datapair = $signBox.jSignature("getData", "image"); //设置输出的格式，具体可以参考官方文档
+					//console.log(datapair);
+	//				var imagebase64 = datapair[1].replace(/\+/g, '%2B');
+	//				console.log(imagebase64);
+		            var i = new Image();
+		            //console.log(i);
+		            i.src = "data:" + datapair[0] + "," + datapair[1];
+		            $(i).appendTo($(".saveBox"));// append the image (SVG) to DOM.
+					//console.log($(i));
+					var address = $(".saveBox img").attr("src");
+					//console.log(address);
+					$.ajax({
+						type:"post",
+						url:serverPath+"/wks/emppdf/base64",
+						headers:{token:localStorage.getItem("token")},
+						data : {"image" : address,"EMPLOYEE_ID":resultData.data.EMPLOYEE_ID,"PDF_URL":resultData.data.PDF_URL},
+						beforeSend:function(){
+							$("#loading").show();
+						},
+						success : function(result){
+							console.log(result);
+							if(result.success == "token"){
+								alert(result.msg);
+								window.parent.window.location.href = "login.html";
+							}else if(result.success){
+								alert("您的入职手续已办齐，欢迎您的加入！");
+								window.location.href = "employeeInformation.html";
+							}else{
+								alert("签名提交失败！");
+							}
+						},
+						complete: function(){
+					     	$("#loading").hide();
+					    },
+						error : function(){
+							console.log("系统网络异常！");
+						}
+					});
+				}
+			}
+		</script>
+	</body>
+</html>

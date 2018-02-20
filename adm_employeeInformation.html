@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>员工信息</title>
+		<link rel="stylesheet" href="css/common.css" />
+		<link rel="stylesheet" href="css/table.css" />
+		<link rel="stylesheet" href="css/shadeModal.css" />
+		<style type="text/css">
+			#loading{width:100%;height:100%;background:rgba(0,0,0,0.5);position: fixed;display: none;}
+			#loading img{position: absolute;left: 0;top:0;right:0;bottom: 0;margin: auto;}
+		</style>
+	</head>
+	<body>
+		<!--导入数据友情提示-->
+		<div id="loading">
+			<img src="images/loading.gif"/>
+		</div>
+		<div class="container">
+			<div class="header clearfix">
+				<div class="h_nav">
+					<h2>员工信息</h2>
+					<p><span>首页</span>/<span>员工管理</span>/<span>员工信息</span></p>
+				</div>
+			</div>
+			<div class="main">
+				<div class="main_con ygxx">
+					<div class="table_pagination ygxx_pagination">
+						<div id="pagePlugins" class="pagePlugins"></div>
+						<div class="pagination_num">共<span class="jilu"></span>条记录，每页
+							<select name="currNum">
+								<option value="5">5</option>
+								<option value="10">10</option>
+								<option value="15">15</option>
+								<option value="20">20</option>
+								<option value="50">50</option>
+							</select>
+							条记录
+						</div>
+						<div class="pagination_seach">
+							<input type="text" id="keyWord" name="keywords" value="" placeholder="输入员工编号／姓名／身份证号"/>
+							<button class="pagination_seach_btn" onclick="Search()"></button>
+						</div>
+						<button class="sx" onclick="showModal()">筛&nbsp;选</button>
+					</div>
+					<div class="table_con" style="overflow-x: auto;">
+						<table id="tableBox" cellspacing="1" cellpadding="0" style="width: 200%;">
+							
+						</table>
+					</div>
+					<div class="table_add">
+						<form id="uploadDataForm">
+							导入员工：
+							<input id="uploadDataInput" type="file" name="file" value="" accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
+							<input type="button" value="导入数据" onclick="uploadData()"/>
+						</form>
+						<a id="downExcel" class="" href="javascript:void(0)">导出员工</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="shade shade_sx">
+			<div class="modal modal_sx">
+				<div class="">
+					<form id="xs_empInfo">
+						<h2>筛选</h2>
+						<p>
+							<b>考勤城市：</b>
+							<select id="select_kqcs" class="select_kqcs" name="WORK_CITY">
+							</select>
+						</p>
+						<p>
+							<b>公司：</b>
+							<select id="select_gs" name="COMPANY">
+							</select>
+						</p>
+						<p>
+							<b>职级：</b>
+							<select id="ZHIJI" name="ZHIJI">
+							</select>
+						</p>
+						<p>
+							<b>服务类别：</b>
+							<select id="select_fwlb" name="SERVERS_TYPE">
+								<option value=" ">--请选择--</option>
+								<option value="A1类">A1类</option>
+								<option value="A类">A类</option>
+								<option value="B类">B类</option>
+								<option value="C类">C类</option>
+								<option value="兼职类">兼职类</option>
+								<option value="停薪留职类">停薪留职类</option>
+							</select>
+						</p>
+						<p>
+							<b>员工状态：</b>
+							<select id="select_ygzt" name="RUZHI_STATUS">
+								<option value=" ">--请选择--</option>
+								<!--<option value="入职">入职</option>-->
+								<option value="试用">试用</option>
+								<option value="调动">调动</option>
+								<option value="转正">转正</option>
+								<option value="离职">离职</option>
+							</select>
+						</p>
+						<p>
+							<b style="">入职起：</b>
+							<input type="date" id="START_DATE" name="START_DATE" value=""/>
+						</p>
+						<p>
+							<b style="">入职止：</b>
+							<input type="date" id="END_DATE" name="END_DATE" value=""/>
+						</p>
+						<p>
+							<input id="qx" type="button" value="取&emsp;消" onclick="closeModal()"/>
+							<input id="qd" type="button" value="确&emsp;定" onclick="qDselectInformation()"/>
+						</p>
+					</form>
+				</div>
+			</div>
+		</div>
+		
+		<script type="text/javascript" src="js/jquery-1.11.3.min.js" ></script>
+		<script type="text/javascript" src="js/jquery.cookie.js" ></script>
+		<script type="text/javascript" src="js/serverURL.js" ></script>
+		<script type="text/javascript" src="plugins/jquery.pagination.js" ></script>
+		<script type="text/javascript" src="js/dateFormat.js" ></script>
+		<script type="text/javascript" src="js/newEmp.js" ></script>
+		<script type="text/javascript">
+			$(function(){
+				//给数据导出生成下载接口
+				$("#downExcel").attr("href",serverPath+"/wks/employee/empExceldownload?roleId="+$.cookie("roleId")+"&name="+$.cookie("name"));
+			})
+			
+			var saveDatas = "";  //保存浏览器请求的数据
+			var rows = $(".pagination_num select option:selected").val();  //每页显示数量
+			var keyword = $("#keyWord").val();  //获取搜索关键字
+			var currPage;  //当前页
+			var initFlag=true;  //标记
+			var _url = serverPath+'/wks/employee/list';
+			var _data = {"currPage":currPage+1,"currNum":rows,"keywords":keyword,"FIND_RUZHI_STATUS":'1'};
+			
+			$(function() {
+				PageCallback(0,null); 
+			});
+			$(".pagination_num select").change(function(){
+				initFlag=true;
+				rows = $(".pagination_num select option:selected").val();
+				PageCallback(0,null); 
+			});
+			//分页查询start
+			function PageCallback(currPage,jq){
+				_data.currPage = currPage + 1,
+				_data.currNum = rows,
+				$.ajax({
+					type:"POST",
+					url: _url,
+					data:_data,
+					dataType:"JSON",
+					headers:{token:localStorage.getItem("token")},
+					success:function(result){
+						console.log(result);
+						if(result.success == "token"){
+							alert(result.msg);
+							window.parent.window.location.href = "login.html";
+						}else if(result.success){
+							if(initFlag){
+								$("#pagePlugins").pagination(result.total,{
+									items_per_page:rows,
+									num_edge_entries:1,
+									num_display_entries:2,
+									callback:PageCallback
+								});
+								initFlag=false;
+							};
+							$(".jilu").text(result.total);
+							$("#tableBox").empty();
+							loadDataList(result.data,result.total);
+						}else{
+							alert(result.msg);
+							window.parent.window.location.href = "login.html";
+						}
+					},
+					error : function(){
+						alert("系统网络异常！");
+					}
+				}); 
+			} 
+			//分页查询end
+			//表格载入数据start
+			function loadDataList(listData,total){
+				var tableTh = `<tr>
+								<th>序号</th>
+								<th>服务类别</th>
+								<th>员工编号</th>
+								<th>身份证</th>
+								<th>姓名</th>
+								<th>电话</th>
+								<th>合同起</th>
+								<th>部门</th>
+								<th>岗位</th>
+								<th>职级</th>
+								<th>职等</th>
+								<th>考勤城市</th>
+								<th>员工状态</th>
+								<th>用工类型</th>
+								<th>合同止</th>
+								<th>工资</th>
+								<th>其他</th>
+								<th>&emsp;</th>
+							</tr>`;
+				$("#tableBox").append(tableTh);
+			 	var	html="";
+			 	for(var i=0;i<listData.length;i++){
+			 		var datas=listData[i];
+			 		if(datas.TOWORK_TIME && datas.OUTWORK_TIME){
+						datas.TOWORK_TIME = new Date(datas.TOWORK_TIME).format("yyyy-MM-dd");
+						datas.OUTWORK_TIME = new Date(datas.OUTWORK_TIME).format("yyyy-MM-dd");
+					}
+			 		html += `<tr>
+								<td>${i+1}</td>
+								<td>${datas.SERVICE_TYPE || ''}</td>
+								<td>${datas.EMP_NUM || ''}</td>
+								<td>${datas.IDCARD || ''}</td>
+								<td>${datas.NAME || ''}</td>
+								<td>${datas.PHONE || ''}</td>
+								<td>${datas.TOWORK_TIME || ''}</td>
+								<td>${datas.FIRST_DEP || ""}/${datas.SECOND_DEP || ""}/${datas.THIRD_DEP || ""}/${datas.DEPARTMENT || ""}</td>
+								<td>${datas.POST_NAME || ''}</td>
+								<td>${datas.ZHIJI || ''}</td>
+								<td>${datas.ZHIDENG || ''}</td>
+								<td>${datas.WORK_CITY || ''}</td>
+								<td>${datas.RUZHI_STATUS || ''}</td>
+								<td>${datas.CONTACT_TYPE || ''}</td>
+								<td>${datas.OUTWORK_TIME || ''}</td>
+								<td>${datas.ZONG_GONGZI || ''}</td>
+								<td>${datas.OTHER_COMMIT || ''}</td>
+								<td class="bj_ck">
+									<a href="editEmployee.html?EMPLOYEE_ID=${datas.EMPLOYEE_ID}">编辑</a>
+									<a href="viewEmployee.html?EMPLOYEE_ID=${datas.EMPLOYEE_ID}">查看</a>
+								</td>
+							</tr>`;
+				}
+				$("#tableBox").append(html); 
+			}
+			//表格载入数据end
+			
+			//搜索功能
+			function Search(){
+				initFlag=true;
+				keyword = $("#keyWord").val();
+				_data = {"currPage":currPage+1,"currNum":rows,"keywords":keyword,"FIND_RUZHI_STATUS":'1'};
+				console.log(keyword);
+				PageCallback(0);
+			}
+			//筛选
+			function qDselectInformation(){
+				var kqcs = $("#select_kqcs").val();
+				var gs = $("#select_gs").val();
+				var zj = $("#select_zj").val();
+				//var dkzt = $("#select_dkzt").val();
+				var fwlb = $("#select_fwlb").val();
+				var ygzt = $("#select_ygzt").val();
+				var startdate = $("#START_DATE").val();
+				var enddate = $("#END_DATE").val();
+				initFlag=true;
+				_url = serverPath + '/wks/employee/list';
+				_data = {"currPage":currPage+1,"currNum":rows,"FIND_RUZHI_STATUS":'1',"WORK_CITY":kqcs,"COMPANY":gs,"ZHIJI":zj,"SERVICE_TYPE":fwlb,"RUZHI_STATUS":ygzt,"START_DATE":startdate,"END_DATE":enddate};
+				PageCallback(0);
+				closeModal();
+			}
+				
+			//筛选弹窗
+			function showModal(){
+				$(".shade").fadeIn();
+				companyListAll();
+				cityListAll();
+				zhijiListAll();
+			}
+			//关闭弹窗
+			function closeModal(){
+				$(".shade").fadeOut();
+				$("#xs_empInfo")[0].reset();
+			}	
+			
+			//导入数据		
+			function uploadData(){
+				var formData = new FormData($("#uploadDataForm")[0]); 
+				var file = $('#uploadDataInput')[0].files[0];
+				console.log(file);
+				if(!file){
+	                 alert("请选择文件");
+	                 return false;
+	             }
+				$.ajax({  
+					url:serverPath + '/wks/employee/readEmpExcel',
+					headers:{token:localStorage.getItem("token")},
+					type: 'POST',  
+					data: formData,  
+					async: true,  
+					cache: false,  
+					contentType: false,  
+					processData: false,  
+					beforeSend:function(){
+						$("#loading").show();
+					},
+					success: function (returndata) {  
+						alert(returndata.msg); 
+						window.location.reload();
+					},  
+					error: function (returndata) {  
+						alert('系统网络异常！');
+					}  
+				}); 
+			}
+
+		</script>
+	</body>
+</html>

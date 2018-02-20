@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>权限管理</title>
+		<link rel="stylesheet" href="css/common.css" />
+		<link rel="stylesheet" href="css/table.css" />
+		<link rel="stylesheet" href="css/shadeModal.css" />
+		<style>
+			.table_con table tr td.bj_ck{width:120px;}
+			/*分配权限内容*/
+			.modal_fpqx{width:70%;height: 70%;}
+			.modal_fpqx fieldset{border:1px solid green;padding:10px;margin:5px 0px;}
+			.modal_fpqx fieldset legend{margin-left:10px;font-weight: 700;}
+			.modal_fpqx fieldset label{margin-right:15px;line-height: 25px;}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<div class="header clearfix">
+				<div class="h_nav">
+					<h2>权限管理</h2>
+					<p><span>首页</span>/<span>系统管理</span>/<span>权限管理</span></p>
+				</div>
+			</div>
+			<div class="main">
+				<div class="main_con qxgl">
+					<div class="table_pagination qxgl_pagination">
+						<ul class="clearfix">
+							<li><a href="">上一页</a></li>
+							<li><a href="">1</a></li>
+							<li><a href="">2</a></li>
+							<li><a href="">3</a></li>
+							<li><a href="">下一页</a></li>
+						</ul>
+						<div class="pagination_num">共360条记录，每页
+							<select>
+								<option value="">5</option>
+								<option value="">10</option>
+								<option value="">15</option>
+								<option value="">20</option>
+							</select>
+							条记录
+						</div>
+						<div class="pagination_seach">
+							<input type="text" name="" value="" placeholder=""/>
+							<button class="pagination_seach_btn"></button>
+						</div>
+					</div>
+					<div class="table_con qxgl_table">
+						<table class="" cellspacing="1" cellpadding="0">
+							<tr>
+								<th>选择</th>
+								<th>用户/角色名称</th>
+								<th>备注</th>
+								<th>权限</th>
+								<th>操作日期</th>
+								<th>&nbsp;</th>
+							</tr>
+							<tr>
+								<td><input type="checkbox" name=""></td>
+								<td>系统管理员</td>
+								<td>内部财务</td>
+								<td></td>
+								<td>2017/3/30</td>
+								<td class="bj_ck">
+									<a class="fpqx_btn" href="javascript:void(0)"><img src="images/bianji.png" />分配权限</a>
+									<a class="ck_btn" href="javascript:void(0)"><img src="images/check.png" />查看</a>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			</div>
+			
+		</div>
+		
+		<!--遮罩层-->
+		<div class="shade shade_fpqx">
+			<!--分配权限弹窗-->
+			<div class="modal modal_fpqx">
+				<div class="">
+					<form>
+						<fieldset>
+							<legend>员工管理：</legend>
+							<label><input type="checkbox" value="" />新建员工</label>
+							<label><input type="checkbox" value="" />编辑</label>
+							<label><input type="checkbox" value="" />查看</label>
+							<label><input type="checkbox" value="" />筛选</label>
+							<label><input type="checkbox" value="" />导出</label>
+							<label><input type="checkbox" value="" />入职管理审核</label>
+							<label><input type="checkbox" value="" />离职管理审核</label>
+							<label><input type="checkbox" value="" />调动管理审核</label>
+							<label><input type="checkbox" value="" />信息修改审核</label>
+						</fieldset>
+						<fieldset>
+							<legend>社保管理：</legend>
+							<label><input type="checkbox" value="" />导入</label>
+							<label><input type="checkbox" value="" />导出</label>
+							<label><input type="checkbox" value="" />编辑</label>
+							<label><input type="checkbox" value="" />查看</label>
+							<label><input type="checkbox" value="" />批量修改</label>
+							<label><input type="checkbox" value="" />筛选</label>
+							<label><input type="checkbox" value="" />社保改动审核</label>
+						</fieldset>
+						<fieldset>
+							<legend>考勤管理：</legend>
+							<label><input type="checkbox" value="" />导入</label>
+							<label><input type="checkbox" value="" />导出</label>
+							<label><input type="checkbox" value="" />编辑</label>
+							<label><input type="checkbox" value="" />查看</label>
+							<label><input type="checkbox" value="" />考勤改动审核</label>
+						</fieldset>
+						<fieldset>
+							<legend>服务费管理：</legend>
+							<label><input type="checkbox" value="" />导入</label>
+							<label><input type="checkbox" value="" />导出</label>
+							<label><input type="checkbox" value="" />编辑</label>
+							<label><input type="checkbox" value="" />查看</label>
+							<label><input type="checkbox" value="" />批量修改</label>
+							<label><input type="checkbox" value="" />服务费改动审核</label>
+						</fieldset>
+						<fieldset>
+							<legend>评价管理：</legend>
+							<label><input type="checkbox" value="" />评价</label>
+							<label><input type="checkbox" value="" />筛选</label>
+							<label><input type="checkbox" value="" />查看</label>
+						</fieldset>
+						<p>
+							<input id="qd" type="button" value="确&emsp;定"/>
+							<input id="qx" type="button" value="取&emsp;消"/>
+						</p>
+					</form>
+				</div>
+			</div>
+		</div>
+		
+		<script type="text/javascript" src="js/jquery-1.11.3.min.js" ></script>
+		<script type="text/javascript" src="js/main.js" ></script>
+		<script type="text/javascript">
+			
+		</script>
+	</body>
+</html>

@@ -1,0 +1,913 @@
+ <!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="Access-Control-Allow-Origin" content="*">
+		<title>编辑员工入职待办</title>
+		<link rel="stylesheet" href="css/common.css" />
+		<link rel="stylesheet" href="css/newEmployee.css" />
+		<style>
+			.look{display: none;}
+			#loading{width:100%;height:100%;background:rgba(0,0,0,0.5);position: fixed;z-index:10;display: none;}
+			#loading img{position: absolute;left: 0;top:0;right:0;bottom: 0;margin: auto;}
+
+		</style>
+	</head>
+	<body>
+		<!--友情提示-->
+		<div id="loading">
+			<img src="images/loading.gif"/>
+		</div>
+		<div class="container">
+			<div class="header clearfix">
+				<div class="h_nav">
+					<h2>员工详情信息</h2>
+					<p><span>首页</span>/<span>待办事项</span>/<span>入职管理</span>/<span>编辑</span></p>
+				</div>
+				<div class="h_btn">
+					<button id="zc" class="zc" onclick="editSave()">暂存</button>
+				</div>
+			</div>
+			<div class="main">
+				<ul class="nav clearfix">
+					<li class="hover">基本信息</li>
+					<li>薪酬信息</li>
+					<li>社保信息</li>
+					<li>合同信息</li>
+				</ul>
+				<form id="myForm">
+					<div class="nav_con">
+						<!--基本信息-->
+						<div class="tab con_baseInfo">
+							<input type="text" class="templet NAME showname" value="" readonly style="border:0;font-size: 24px;font-weight: bold;" />
+						
+							<!--基本信息-->
+							<div class="part part2">
+									<h3>
+										<i style="font-family:'Arial-BoldMT', 'Arial Bold', 'Arial';color:#00CC99;">▼</i>基本信息
+										<img src="images/bianji.png"><span>编辑</span>
+									</h3>
+									<div class="part_con">
+											<p>
+												<label><em>*</em>姓名：</label>
+												<input type="text" class="templet NAME bjName" name="NAME" value="" onblur="showName()"/>
+											</p>
+											<p>
+												<label>英文名（曾用名）：</label>
+												<input type="text" class="templet ENGLISH_NAME" name="ENGLISH_NAME" />
+											</p>
+											<p class="sex">
+												<label><em>*</em>性别：</label>
+												<select class="templet SEX" name="SEX">
+													<option value="男">男</option>
+													<option value="女">女</option>
+												</select>
+											</p>
+											<p>
+												<label><em>*</em>证件号码（身份证）：</label>
+												<input type="text" class="templet IDCARD" name="IDCARD" />
+											</p>
+											<p>
+												<label><em>*</em>身份证地址：</label>
+												<input type="text" class="templet ADDRESS" name="ADDRESS" />
+											</p>
+											<p>
+												<label><em>*</em>现居住地：</label>
+												<input type="text" class="templet HOME" name="HOME" required/>
+											</p>
+											<p>
+												<label><em>*</em>开户行：</label>
+												<!--<input type="text" class="" name="BANK_TYPE" />-->
+												<select name="BANK_TYPE" class="templet BANK_TYPE KAIHUHANG" id="KAIHUHANG">
+												</select>
+											</p>
+											<p>
+												<label><em>*</em>支行：</label>
+												<input type="text" class="templet BANK_CITY" name="BANK_CITY" />
+											</p>
+											<p>
+												<label><em>*</em>银行卡号：</label>
+												<input type="text" class="templet BANK_ACCOUNT" name="BANK_ACCOUNT" />
+											</p>
+											<p>
+												<label><em>*</em>手机号码：</label>
+												<input type="text" class="templet PHONE" name="PHONE" />
+											</p>
+											<p>
+												<label>QQ号：</label>
+												<input type="text" class="templet QQ" name="QQ" />
+											</p>
+											<p>
+												<label>微信号：</label>
+												<input type="text" class="templet WEIXIN" name="WEIXIN" />
+											</p>
+											<p>
+												<label><em>*</em>邮箱：</label>
+												<input type="text" class="templet EMAIL" name="EMAIL" />
+											</p>
+											<p>
+												<label><em>*</em>紧急联系人：</label>
+												<input type="text" class="templet EMERGENCY_MAN" name="EMERGENCY_MAN" />
+											</p>
+											<p>
+												<label><em>*</em>联系人手机号码：</label>
+												<input type="text" class="templet EMERGENCY_PHONE" name="EMERGENCY_PHONE" />
+											</p>
+										
+									</div>
+								</div>
+							<!--岗位信息-->
+							<div class="part part3">
+								<h3>
+									<i style="font-family:'Arial-BoldMT', 'Arial Bold', 'Arial';color:#00CC99;">▼</i>岗位信息
+									<img src="images/bianji.png"><span>编辑</span>
+								</h3>
+								<div class="part_con">
+										<p>
+											<label><em>*</em>员工编号：</label>
+											<input type="text" class="templet EMP_NUM" name="EMP_NUM" value="自动生成" readonly="readonly"/>
+										</p>
+										<p>
+											<label><em>*</em>员工状态：</label>
+											<input type="text" class="templet RUZHI_STATUS" name="RUZHI_STATUS" value="入职" readonly="readonly"/>
+											<!--<select class="templet RUZHI_STATUS" name="RUZHI_STATUS">
+												<option value="试用" selected>试用</option>
+												<option value="离职">转正</option>
+												<option value="调动">调动</option>
+											</select>-->
+										</p>
+										<p>
+											<label><em>*</em>审批人：</label>
+											<input id="spr" type="text" class="templet AGREE_MAN" name="AGREE_MAN" value=""  onchange="judgeSPR()"/>
+										</p>
+										<p>
+											<label><em>*</em>入职时间（合同起时间）：</label>
+											<input type="date" class="templet TOWORK_TIME" name="TOWORK_TIME" value=""/>
+										</p>
+										<p>
+											<label><em>*</em>用工形式：</label>
+											<select class="templet CONTACT_TYPE" name="CONTACT_TYPE">
+												<option value="劳务合同">劳务合同</option>
+												<option value="劳动合同">劳动合同</option>
+												<option value="实习">实习</option>
+												<option value="返聘">返聘</option>
+											</select>
+										</p>
+										<p>
+											<label><em>*</em>员工部门编码：</label>
+											<input id="bmCode" type="text" class="templet LAST_DEP_NUM" name="LAST_DEP_NUM" value="" onkeyup="findCode()"/>
+											<ul id="bmCodeList">
+											</ul>
+										</p>
+										<p>
+											<label><em>*</em>公司：</label>
+											<!--<input type="text" class="templet COMPANY" name="COMPANY" value=""/>-->
+											<select class="templet COMPANY" name="COMPANY" id="select_gs" onchange="sendTK()">
+											</select>
+										</p>
+										<p>
+											<label><em>*</em>部门：</label>
+											<input id="Department" type="text" class="templet DEPARTMENT" name="DEPARTMENT" value=""/>
+										</p>
+										<p>
+											<label><em></em>岗位类型：</label>
+											<select id="POST_TYPE"  class="templet POST_TYPE"  name="POST_TYPE" onchange="sendTK()">
+												
+											</select>
+										</p> 
+										<p>
+											<label><em>*</em>岗位：</label>
+											<!--<input type="text" class="templet POST_NAME" name="POST_NAME" value=""/>-->
+											<select id="Post" class="templet POST_NAME" name="POST_NAME">
+												
+											</select>
+										</p>
+										<p>
+											<label><em>*</em>职级：</label>
+											<!--<select class="templet ZHIJI" name="ZHIJI">
+												<option value="实习生">实习生</option>
+												<option value="专员">专员</option>
+												<option value="主管">主管</option>
+												<option value="经理">经理</option>
+												<option value="总监">总监</option>
+												<option value="总经理">总经理</option>
+												<option value="总裁">总裁</option>
+												<option value="其他">其他</option>
+											</select>-->
+											<select id="ZHIJI" class="templet ZHIJI" name="ZHIJI" required>
+											
+											</select>
+										</p>
+										<p>
+											<label>职等：</label>
+											<input type="text" class="templet ZHIDENG" name="ZHIDENG" value=""/>
+										</p>
+										<p>
+											<label><em>*</em>出勤方式：</label>
+											<select class="templet REST_TYPE" name="REST_TYPE">
+												<option value="双休">双休</option>
+												<option value="单休">单休</option>
+												<option value="长短周">长短周</option>
+											</select>
+										</p>
+								</div>
+							</div>
+							<!--人士附加信息-->
+							<div class="part part4">
+								<h3>
+									<i style="font-family:'Arial-BoldMT', 'Arial Bold', 'Arial';color:#00CC99;">▼</i>人事附加信息
+									<img src="images/bianji.png"><span>编辑</span>
+								</h3>
+								<div class="part_con">
+										<p>
+											<label><em>*</em>服务类别：</label>
+											<select class="templet SERVICE_TYPE" name="SERVICE_TYPE" required>
+												<option value="">--请选择--</option>
+												<option value="A1类">A1类</option>
+												<option value="A类">A类</option>
+												<option value="B类">B类</option>
+												<option value="C类">C类</option>
+												<option value="兼职类">兼职类</option>
+												<option value="停薪留职类">停薪留职类</option>
+											</select>
+										</p>
+										<p>
+											<label><em>*</em>考勤城市：</label>
+											<!--<input type="text" class="templet WORK_CITY" name="WORK_CITY" value="" placeholder="格式：深圳市"/>-->
+											<select class="select_kqcs templet WORK_CITY" name="WORK_CITY" id="select_kqcs"  onchange="sendTK()">
+											</select>
+										</p>
+										<p>
+											<label><em>*</em>服务经理：</label>
+											<input type="text" class="templet FUWU_JL"  name="FUWU_JL" value="" />
+										</p>
+										<p>
+											<label><em>*</em>工资打款主体：</label>
+											<!--<input type="text" class="templet MONEY_BODY" name="MONEY_BODY" value=""/>-->
+											<select name="MONEY_BODY" class="templet MONEY_BODY ZHUTI_GONGZI" id="ZHUTI_GONGZI">
+											</select>
+										</p>
+										<p>
+											<label><em>*</em>服务费打款主体：</label>
+											<!--<input type="text" class="templet FUWU_BODY" name="FUWU_BODY" value=""/>-->
+											<select name="FUWU_BODY" class="templet FUWU_BODY ZHUTI_FUWUFEI" id="ZHUTI_FUWUFEI" required>
+											</select>
+										</p>
+										<p>
+											<label>备注：</label>
+											<textarea class="templet PERSONEL_BZ" name="PERSONEL_BZ" cols="60" rows="5"></textarea>
+										</p>
+								</div>
+							</div>
+							<!--入职附件-->
+							<div class="part part5">
+								<h3>
+									<i style="font-family:'Arial-BoldMT', 'Arial Bold', 'Arial';color:#00CC99;">▼</i>入职附件
+									<img src="images/bianji.png"><span>编辑</span>
+								</h3>
+								<div class="part_con upload">
+										<p>
+											<em>*</em>身份证正面：<button type="button" class="2"><b class="_sfzzm IDCARD_ZHE">点击上传</b><input  id="sfzzm" name="2" type="file" onchange="addUpload('2','#sfzzm','_sfzzm')" accept="image/jpeg,image/png" required/></button>
+											<span class="look" onclick="Look(2)"><img src="images/check.png"/>查看</span>
+										</p>
+										<p>
+											<em>*</em>身份证反面：<button type="button" class="3"><b class="_sfzfm IDCARD_FAN">点击上传</b><input id="sfzfm" name="3" type="file" accept="image/jpeg,image/png"  onchange="addUpload('3','#sfzfm','_sfzfm')" required/></button>
+											<span class="look" onclick="Look(3)"><img src="images/check.png"/>查看</span>
+										</p>
+										<p>
+											<em>*</em>银行卡签名：<button type="button" class="4"><b class="_yhkqm BANK_SIG">点击上传</b><input id="yhkqm" name="4" type="file" accept="image/jpeg,image/png"  onchange="addUpload('4','#yhkqm','_yhkqm')" required/></button>
+											<span class="look" onclick="Look(4)"><img src="images/check.png"/>查看</span>
+										</p>
+										<p>
+											入职承诺书：<button type="button" class="5"><b class="_rzcns TOWORK_COM">点击上传</b><input id="rzcns" name="5" type="file" accept="image/jpeg,image/png"  onchange="addUpload('5','#rzcns','_rzcns')"/></button>
+											<span class="look" onclick="Look(5)"><img src="images/check.png"/>查看</span>
+										</p>
+										<p>
+											离职证明：<button type="button" class="6"><b class="_lzzm OUTWORK_PRO">点击上传</b><input id="lzzm" name="6" type="file" accept="image/jpeg,image/png"  onchange="addUpload('6','#lzzm','_lzzm')"/></button>
+											<span class="look" onclick="Look(6)"><img src="images/check.png"/>查看</span>
+										</p>
+										<p>
+											毕&ensp;业&ensp;证：<button type="button" class="7"><b class="_byz GRADUATION_CARD">点击上传</b><input id="byz" name="7" accept="image/jpeg,image/png"  type="file" onchange="addUpload('7','#byz','_byz')"/></button>
+											<span class="look" onclick="Look(7)"><img src="images/check.png"/>查看</span>
+										</p>
+										<p>
+											合同文件：<button type="button" class="8"><b class="_qtzj1 OTHER1">点击上传</b><input id="qtzj1" name="8" type="file" accept="image/jpeg,image/png"  onchange="addUpload('8','#qtzj2','_qtzj1')"/></button>
+											<span class="look" onclick="Look(8)"><img src="images/check.png"/>查看</span>
+										</p>
+										<p>
+											其他证件：<button type="button" class="9"><b class="_qtzj2 OTHER2">点击上传</b><input id="qtzj2" name="9" type="file" accept="image/jpeg,image/png"  onchange="addUpload('9','#qtzj2','_qtzj2')"/></button>
+											<span class="look" onclick="Look(9)"><img src="images/check.png"/>查看</span>
+										</p>
+								</div>
+							</div>
+						</div>
+						<!--薪酬信息-->
+						<div class="tab con_salaryInfo" style="display: none;" >
+							<input type="text" class="templet NAME showname" value="" readonly style="border:0;font-size: 24px;font-weight: bold;" />
+							<div class="part part1">
+								<h3>
+									<i style="font-family:'Arial-BoldMT', 'Arial Bold', 'Arial';color:#00CC99;">▼</i>当前薪资
+									<img src="images/bianji.png"><span>编辑</span>
+									<em>*注意确认总额和日工资</em>
+									<em></em>
+								</h3>
+								<div class="part_con">
+										<p>
+											<label><em>*</em>底薪类</label>
+											<table class="dxl"cellspacing="1" cellpadding="0">
+												<tr>
+													<th>基本工资</th>
+													<th>岗位工资</th>
+													<th>兼职工资</th>
+													<th>技术工资</th>
+													<th>其他</th>
+													<th>底薪总额</th>
+												</tr>
+												<tr>
+													<td><input type="text" class="jsdx BASE_SALARY" name="BASE_SALARY" value="0" onkeyup="calculateZDX()"></td>
+													<td><input type="text" class="jsdx POST_SALARY" name="POST_SALARY" value="0" onkeyup="calculateZDX()"></td>
+													<td><input type="text" class="jsdx PART_SALARY" name="PART_SALARY" value="0" onkeyup="calculateZDX()"></td>
+													<td><input type="text" class="jsdx JISHU_SALARY" name="JISHU_SALARY" value="0" onkeyup="calculateZDX()"></td>
+													<td><input type="text" class="jsdx DIXIN_OTHER" name="DIXIN_OTHER" value="0" onkeyup="calculateZDX()"></td>
+													<td><input type="text" class="ZONG_DIXIN zong_dixin" name="ZONG_DIXIN" value="0"></td>
+												</tr>
+											</table>
+										</p>
+										<p>
+											<label><em>*</em>补助类</label>
+											<table class="dxl"cellspacing="1" cellpadding="0">
+												<tr>
+													<th>通讯补助</th>
+													<th>住宿补助</th>
+													<th>交通补助</th>
+													<th>餐饮补助</th>
+													<th>种子外交官补助</th>
+													<th>技术组长补助</th>
+													<th>全勤标准</th>
+													<th>全勤补助</th>
+													<th>外派补助</th>
+													<th>驻外补助</th>
+													<th>其它补助</th>
+													<th>补助总额</th>
+												</tr>
+												<tr>
+													<td><input type="text" class="jsbz TONGXUN" name="TONGXUN" value="0" onkeyup="calculateZBZ()"></td>
+													<td><input type="text" class="jsbz ZHUSU" name="ZHUSU" value="0" onkeyup="calculateZBZ()"></td>
+													<td><input type="text" class="jsbz JIAOTONG" name="JIAOTONG" value="0" onkeyup="calculateZBZ()"></td>
+													<td><input type="text" class="jsbz CHIYIN" name="CHIYIN" value="0" onkeyup="calculateZBZ()"></td>
+													<td><input type="text" class="jsbz ZHONGZI" name="ZHONGZI" value="0" onkeyup="calculateZBZ()"></td>
+													<td><input type="text" class="jsbz JISHU" name="JISHU" value="0" onkeyup="calculateZBZ()"></td>
+													<td><input type="text" class="jsbz QUANQIN" name="QUANQIN" value="0" onkeyup="calculateZBZ()"></td>
+													<td><input type="text" class="jsbz QUANQINBUZHU" name="QUANQINBUZHU" value="0" onkeyup="calculateZBZ()"></td>
+													<td><input type="text" class="jsbz WAIPAI" name="WAIPAI" value="0" onkeyup="calculateZBZ()"></td>
+													<td><input type="text" class="jsbz ZHUWAI" name="ZHUWAI" value="0" onkeyup="calculateZBZ()"></td>
+													<td><input type="text" class="jsbz BUZHU_OTHER" name="BUZHU_OTHER" value="0" onkeyup="calculateZBZ()"></td>
+													<td><input type="text" class="ZONG_BUZHU zong_buzhu" name="ZONG_BUZHU" value="0"></td>
+												</tr>
+											</table>
+										</p>
+										<p>
+											<label><em>*</em>绩效工资：</label>
+											<input type="text" class="templet JIXIAO_SALARY" name="JIXIAO_SALARY" />
+										</p>
+										<p>
+											<label>保底提成：</label>
+											<input type="text" class="templet TICHENG_SALARY" name="TICHENG_SALARY" />
+										</p>
+										<p>
+											<label><em>*</em>工资总额：</label>
+											<input type="text" class="templet ZONG_GONGZI" name="ZONG_GONGZI" required/>
+										</p>
+										<p>
+											<label><em>*</em>日工资：</label>
+											<input type="text" class="templet DAY_SALARY" name="DAY_SALARY" />
+										</p>
+										<p>
+											<label>调动补充说明：</label>
+											<textarea cols="60" rows="5" class="templet SALARY_INTROD" name="SALARY_INTROD"></textarea>
+										</p>
+								</div>
+							</div>
+						</div>
+						<!--社保信息-->
+						<div class="tab con_socialInfo">
+							<input type="text" class="templet NAME showname" value="" readonly style="border:0;font-size: 24px;font-weight: bold;" />
+							<div class="part part1">
+							<h3>
+								<i style="font-family:'Arial-BoldMT', 'Arial Bold', 'Arial';color:#00CC99;">▼</i>社保公积金
+								<img src="images/bianji.png"><span>编辑</span>
+							</h3>
+							<div class="part_con">
+								<p class="">
+									<label><em>*</em>社保状态：</label>
+									<select class="templet SHEBAO_STATUS" name="SHEBAO_STATUS">
+										<option value="不参保" selected>不参保</option>
+										<option value="参保">参保</option>
+									</select>
+								</p>
+								<div class="canbao">
+									<p>
+										<label>户籍所在地：</label>
+										<input class="templet HUJI" type="text" name="HUJI" />
+									</p>
+									<p>
+										<label><em>*</em>参保城市：</label>
+										<input type="text" class="templet SHEBAO_CITY" name="SHEBAO_CITY" />
+									</p>
+									<p>
+										<label><em>*</em>社保打款主体：</label>
+										<!--<input type="text" class="templet SHEBAO_BODY" name="SHEBAO_BODY" />-->
+										<select name="SHEBAO_BODY" class="templet SHEBAO_BODY ZHUTI_SHEBAO" id="ZHUTI_SHEBAO">
+										</select>
+									</p>
+									<p>
+										<label><em>*</em>社保参保账户名称：</label>
+										<!--<input type="text" class="templet SHEBAO_ACCOUNT" name="SHEBAO_ACCOUNT" />-->
+										<select name="SHEBAO_ACCOUNT" class="templet SHEBAO_ACCOUNT ZHANGHAO">
+										</select>
+									</p>
+									<p class="">
+										<label><em></em>公积金是否缴纳：</label>
+										<select class="templet ISGONGJIJIN" name="ISGONGJIJIN">
+											<option value="是">是</option>
+											<option value="否">否</option>
+										</select>
+									</p>
+									<p>
+										<label><em></em>公积金账户名称：</label>
+										<!--<input type="text" class="templet GJJ_ACCOUNT" name="GJJ_ACCOUNT" />-->
+										<select name="GJJ_ACCOUNT" class="templet GJJ_ACCOUNT ZHANGHAO">
+										</select>
+									</p>
+									<p>
+										<label>备注：</label>
+										<textarea cols="55" rows="5" class="templet SHEBAO_BZ" name="SHEBAO_BZ"></textarea>
+									</p>
+									<p>
+										<table class=""cellspacing="1" cellpadding="0">
+											<tr>
+												<th>参保基数</th>
+												<th>单位缴费合计</th>
+												<th>个人缴费合计</th>
+												<th>参保总计</th>
+												<!--<th>其它</th>-->
+											</tr>
+											<tr>
+												<td><input type="text" class="templet SHEBAO_JS" name="SHEBAO_JS" value="0"></td>
+												<td><input type="text" class="jssb templet DANWEI_JF" name="DANWEI_JF" value="0" onkeyup="calculateSB()"></td>
+												<td><input type="text" class="jssb templet GEREN_JF" name="GEREN_JF" value="0" onkeyup="calculateSB()"></td>
+												<td><input type="text" class="templet SHEBAO_ZJ" name="SHEBAO_ZJ" value="0"></td>
+												<!--<td><input type="text" class="templet SHEBAO_OTHER" name="SHEBAO_OTHER" value=""></td>-->
+											</tr>
+										</table>
+									</p>
+									<p>
+										<table class=""cellspacing="1" cellpadding="0">
+											<tr>
+												<th>公积金基数</th>
+												<th>单位公积金缴费合计</th>
+												<th>个人公积金缴费合计</th>
+												<th>公积金总计</th>
+											</tr>
+											<tr>
+												<td><input type="text" class="templet GONGJJ_JS" name="GONGJJ_JS" value="0"></td>
+												<td><input type="text" class="jsgjj templet DW_GONGJJ_HJ" name="DW_GONGJJ_HJ" value="0" onkeyup="calculateGJJ()"></td>
+												<td><input type="text" class="jsgjj templet GR_GONGJJ_HJ" name="GR_GONGJJ_HJ" value="0" onkeyup="calculateGJJ()"></td>
+												<td><input type="text" class="GONGJJ_ZJ" name="GONGJJ_ZJ" value="0"></td>
+											</tr>
+										</table>
+									</p>
+								</div>
+							</div>
+							</div>
+						</div>
+						
+						<!--合同信息-->
+						<div class="tab con_contractInfo" style="display: none;">
+							<input type="text" class="templet NAME showname" value="" readonly style="border:0;font-size: 24px;font-weight: bold;" />
+							<div class="part part1 ">
+								<h3>
+									<i style="font-family:'Arial-BoldMT', 'Arial Bold', 'Arial';color:#00CC99;">▼</i>合同信息
+									<img src="images/bianji.png"><span>编辑</span>
+								</h3>
+								<div class="part_con">
+									<p>
+										<label><em>*</em>合同主体：</label>
+										<!--<input type="text" class="templet MAIN_BODY" name="MAIN_BODY" value=""/>-->
+										<select name="MAIN_BODY" class="templet MAIN_BODY ZHUTI_HETONG" id="ZHUTI_HETONG">
+										</select>
+									</p>
+									<p>
+										<label><em>*</em>合同止时间：</label>
+										<input type="date" class="templet OUTWORK_TIME" name="OUTWORK_TIME" value=""/>
+									</p>
+									<p>
+										<label><em>*</em>试用期月数：</label>
+										<select name="SHIYONG_TIME" class="templet SHIYONG_TIME">
+											<option value="0">0</option>
+											<option value="1">1</option>
+											<option value="2">2</option>
+											<option value="3">3</option>
+											<option value="4">4</option>
+											<option value="5">5</option>
+											<option value="6" selected>6</option>
+										</select>
+									</p>
+									<p>
+										<label><em>*</em>合同薪酬：</label>
+										<input type="text" class="templet HETONG_SALARY" name="HETONG_SALARY" required/>
+									</p>
+									<p>
+										<label><em>*</em>工作时间：</label>
+										<select class="templet WORK_TIME" name="WORK_TIME">
+											<option value="标准工时制">标准工时制</option>
+											<option value="其它工时制">其它工时制</option>
+										</select>
+									</p>
+									<p class="tkk" id="termLibrary">
+										<label><em>*</em>条款库</label>
+										
+									</p>
+								</div>
+							</div>
+						</div>
+					</div>
+				<form>
+			</div>
+			<div class="footer_button">
+				<a href="javascript:void(0)" class="makePDF" onclick="loadPDF()">生成PDF</a>
+				<a href="javascript:void(0)" onclick="lookPDF()">查看PDF文件</a>
+			</div>
+		</div>
+		<style>
+			.showImage{width:100%;height:100%;background:rgba(0,0,0,0.8);position: fixed;top: 0px;
+				display: none;}
+			.pic{width:95%;height:100%;margin:5% auto;}
+			.pic img{width: 100%;height:100%;}
+		</style>
+		<!--查看图片-->
+		<div class="showImage">
+			<div class="pic">
+				<img src="" />
+			</div>
+		</div>
+		
+		<!--查看条框内容-->
+		<style>
+			.showTKShade{width:100%;height:100%;background:rgba(0,0,0,0.8);position: fixed;left: 0;top:0;display: none;}
+			.showTkbox{width:90%;height:90%;position:absolute;left:0;top:0;right:0;bottom:0;margin:auto;
+				background:#fff;border:1px solid red;}
+			.showTkNum{height:35px;text-align: center;line-height: 35px;}
+			.tkcon{width:90%;height:90%;margin:0px auto;display: block;}
+		</style>
+		<div class="showTKShade">
+			<div class="showTkbox">
+				<p class="showTkNum"></p>
+				<textarea class="tkcon" id="showTermLibrary"></textarea>
+			</div>
+		</div>
+		
+		<script type="text/javascript" src="js/jquery-1.11.3.min.js" ></script>
+		<script type="text/javascript" src="js/serverURL.js" ></script>
+		<script type="text/javascript" src="js/dateFormat.js" ></script>
+		<script type="text/javascript" src="js/jquery.validate.min.js" ></script>
+		<script type="text/javascript" src="js/messages_zh.js" ></script>
+		<script type="text/javascript" src="js/jquery.cookie.js" ></script>
+		<script type="text/javascript" src="js/lookPicture.js" ></script>
+		<script type="text/javascript" src="js/tab.js" ></script>
+		<script type="text/javascript" src="js/newEmp.js" ></script>
+		<script type="text/javascript" src="js/calculate.js" ></script>
+		<script type="text/javascript" src="js/newEmpFormValidate.js" ></script>
+		<script type="text/javascript" src="js/pdfFormValidate.js" ></script>
+		
+		<script type="text/javascript">
+			var resultData = null;
+			console.log(resultData);
+			$(function(){
+				//页面加载完成请求公司、城市、职级数据
+				kaihuhangListAll();
+				companyListAll();
+				cityListAll();
+				postTypeListAll();
+				zhijiListAll();
+				zhuTiForGongZiListAll();
+				zhuTiForFuWuFeiListAll();
+				zhuTiForSheBaoListAll();
+				zhanghaoListAll();
+				zhuTiForHeTongListAll();
+				
+				
+				var _url = window.location.href; //拿到地址
+				var parameter = _url.split("=")[1]; //分割字符创变成数组取得传过来的id
+				
+				$.ajax({
+					type : "post",
+					url :　serverPath+"/wks/employee/findById",
+					headers:{token:localStorage.getItem("token")},
+					data : {"EMPLOYEE_ID":parameter},
+					dataType:"JSON",
+					success : function(result){
+						//var result = JSON.parse(result);
+						resultData = result;
+						console.log(resultData);
+						console.log(resultData.data);
+						if(result.success == "token"){
+							alert(result.msg);
+							window.parent.window.location.href = "login.html";
+						}else if(result.success){
+							if(result.data.TOWORK_TIME && result.data.OUTWORK_TIME){
+								console.log(result.data.TOWORK_TIME);
+								result.data.TOWORK_TIME = new Date(result.data.TOWORK_TIME).format("yyyy-MM-dd");
+								result.data.OUTWORK_TIME = new Date(result.data.OUTWORK_TIME).format("yyyy-MM-dd");
+								console.log(result.data.TOWORK_TIME);
+							}
+
+							if (result.data.IDCARD_ZHE) {
+								$("b.IDCARD_ZHE").text("上传完成");
+								$('#sfzzm').removeAttr("aria-required");
+								$('#sfzzm').removeAttr("required");
+							}
+							if (result.data.IDCARD_FAN) {
+								$("b.IDCARD_FAN").text("上传完成");
+								$('#sfzfm').removeAttr("aria-required");
+								$('#sfzfm').removeAttr("required");
+							}
+							if (result.data.BANK_SIG) {
+								$("b.BANK_SIG").text("上传完成");
+								$('#yhkqm').removeAttr("aria-required");
+								$('#yhkqm').removeAttr("required");
+							}
+
+							if (result.data.TOWORK_COM) {
+								$("b.TOWORK_COM").text("上传完成");
+							}
+							if (result.data.OUTWORK_PRO) {
+								$("b.OUTWORK_PRO").text("上传完成");
+							}
+							if (result.data.GRADUATION_CARD) {
+								$("b.GRADUATION_CARD").text("上传完成");
+							}
+							if (result.data.OTHER1) {
+								$("b.OTHER1").text("上传完成");
+							}
+							if (result.data.OTHER2) {
+								$("b.OTHER2").text("上传完成");
+							}
+							
+							//判断pdf是否生成
+							if(result.data.PDF_SERVICE_URL){
+								$(".makePDF").addClass("_color").text("已生成PDF").removeAttr("onclick");
+							}
+							
+							//根据name属性插入数据
+							for(var prop in result.data){
+								var txt = $("."+prop).val(result.data[prop]);
+							}
+							
+							//根据员工编码发送请求
+							findCode(result.data['POST_NAME']);
+							
+							//判断文件是否存在
+							//fileExist();
+							
+							//不参保时隐藏参保填写信息
+							if($(".SHEBAO_STATUS").val() == "参保"){
+								$(".canbao").show();
+								console.log($(".SHEBAO_STATUS").val())
+							}else{
+								$(".canbao").hide();
+							}
+						}else{
+							alert(result.msg);
+						}
+					},
+					error : function(){
+						alert("系统网络异常！");
+					}
+				});
+			});
+			
+			//参保时显示参保填写信息
+			$(".SHEBAO_STATUS").change(function(){
+				if($(this).val() == "参保"){
+					console.log($(this).val());
+					$(".canbao").show();
+				}else{
+					$(".canbao").hide();
+				}
+			})
+			
+			//判断是否存在审批人
+			function judgeSPR(){
+				$.ajax({
+					type:"post",
+					url: serverPath + "/wks/employee/findByName",
+					headers:{token:localStorage.getItem("token")},
+					data:{"NAME":$("#spr").val()},
+					dataType:"json",
+					success: function(result){
+						if(result.success == "token"){
+							alert(result.msg);
+							window.parent.window.location.href = "login.html";
+						}else if(result.success && result.msg == "no"){
+							alert("审批人输错或不存在，请重新输入！");
+						}
+					},
+					error: function(){
+						alert("系统网络异常！");
+					}
+				});
+			}
+			
+			//暂存提交表单
+			function editSave(){
+		        var form = $("#myForm")[0];
+				console.log(form);
+				var fd = new FormData(form);
+				fd.append("EMPFILE_ID",resultData.data.EMPFILE_ID);
+				fd.append("EMPLOYEE_ID",resultData.data.EMPLOYEE_ID);
+				fd.append("EMP_NUM",resultData.data.EMP_NUM);
+				console.log(fd);
+				$.ajax({
+					type:"post",
+					url:serverPath +"/wks/employee/edit",  
+					headers:{token:localStorage.getItem("token")},
+					data : fd ,
+					dataType : "json",
+					cache : false,
+					contentType :　false,
+					processData: false,
+					beforeSend:function(){
+						$("#loading").show();
+					},
+					success : function(result){
+						console.log(result);
+						if(result.success == "token"){
+							alert(result.msg);
+							window.parent.window.location.href = "login.html";
+						}else if(result.success){
+							alert("暂存成功,请到待办处理!");
+							window.location.href = "entryManagement.html"; 
+						}else{
+							alert(result.msg);
+						}
+					},
+					complete: function(){
+				     	$("#loading").hide();
+				    },
+					error:function(){
+						alert("系统网络异常!");
+					}
+				});
+			}
+			
+		    //提交数据，生成PDF文件
+		    function loadPDF(){
+		    	if(validFormPdf().form()) {
+			        //通过表单验证，以下编写自己的代码
+			    	var form = $("#myForm")[0];
+					console.log(form);
+					var fd = new FormData(form);
+					fd.append("EMPFILE_ID",resultData.data.EMPFILE_ID);
+					fd.append("EMPLOYEE_ID",resultData.data.EMPLOYEE_ID);
+					console.log(resultData.data.EMPFILE_ID);
+			    	$.ajax({
+			    		type:"post",
+			    		url:serverPath+"/wks/emppdf/createPdf",
+			    		headers:{token:localStorage.getItem("token")},
+			    		data: fd,
+			    		dataType : "json",
+						cache : false,
+						contentType :　false,
+						processData: false,
+						beforeSend:function(){
+							$("#loading").show();
+						},
+			    		success: function(result){
+			    			console.log(result);
+			    			if(result.success == "token"){
+								alert(result.msg);
+								window.parent.window.location.href = "login.html";
+							}else if(result.success){
+								alert(result.msg);
+			    				$(".makePDF").addClass("_color").text("已生成PDF").removeAttr("onclick");
+			    				//$(".zc").addClass("_color").text("已生成PDF").removeAttr("onclick");
+			    				window.location.reload();
+			    			}else{
+			    				alert(result.msg);
+			    			}
+			    		},
+			    		complete: function(){
+					     	$("#loading").hide();
+					    },
+			    		error: function(){
+			    			alert("系统网络异常!");
+			    		}
+			    	});
+			    } else {
+			    	alert("请完善用户信息！");
+			        //校验不通过，什么都不用做，校验信息已经正常显示在表单上
+			    }
+		    }
+
+		    //切换tab页显示名字
+			function showName(){
+				console.log($(".bjName").val());
+				$(".tab .showname").val($(".bjName").val());
+			}
+			
+			//查看PDF文件
+		    function lookPDF(){
+		    	$.ajax({
+		    		type:"post",
+		    		url:serverPath+"/wks/emppdf/pdfService",
+		    		headers:{token:localStorage.getItem("token")},
+		    		data: {"EMPLOYEE_ID":resultData.data.EMPLOYEE_ID},
+		    		dataType : "json",
+		    		success: function(result){
+		    			if(result.success == "token"){
+							alert(result.msg);
+							window.parent.window.location.href = "login.html";
+						}else if(result.success){
+		    				console.log(result);
+		    				console.log(resultData.data.EMPLOYEE_ID);
+		    				window.location.href = "fileDetails.html?_datas="+resultData.data.EMPLOYEE_ID;
+		    			}else{
+		    				alert("查看文件出错,确认是否已生成PDF文件!");
+		    			}
+		    		},
+		    		error: function(){
+		    			alert("系统网络异常!");
+		    		}
+		    	});
+		    }
+		    
+		    //查询条款库
+		    function sendTK(){
+				var workCity = $("#select_kqcs").val();
+				var posts = $("#POST_TYPE").val();
+				var zhiji = $("#select_gs").val();
+				$.ajax({
+					type:"post",
+					url: serverPath + "/wks/ziliao/findByZiliaoNum",
+					headers:{token:localStorage.getItem("token")},
+					data:{"workCity":workCity,"posts":posts,"zhiji":zhiji},
+					dataType:"json",
+					success: function(result){
+						var html = "";
+						if(result.success == "token"){
+							alert(result.msg);
+							window.parent.window.location.href = "login.html";
+						}else if(result.success){
+							console.log(result);
+							for(var i=0;i<result.data.length;i++){
+								html += "<br /><lable><input type='checkbox' name='ZILIAO_IDS' value='"+result.data[i].ZILIAO_ID+"'/>"+result.data[i].ZILIAO_TYPE_NAME+"</lable>"+"<button type='button' style='margin-left:15px;' onclick='lookTkCon("+result.data[i].ZILIAO_ID+")'>查看</button>";
+								//html += "<br /><lable><input type='checkbox' name='ZILIAO_IDS' value='"+result.data[i].ZILIAO_ID+"'/>"+result.data[i].ZILIAO_TYPE_NAME+"</lable>";
+							}
+							$("#termLibrary").append(html);
+							
+						}else{
+							alert(result.msg);
+						}
+					},
+					error: function(){
+						alert("系统网络异常！");
+					}
+				})
+			}
+		    
+		    //查看条款内容
+			function lookTkCon(id){
+				$.ajax({
+					type:"post",
+					url: serverPath + "/wks/ziliao/findById",
+					headers:{"token":localStorage.getItem("token")},
+					data:{"ziliaoId":id},
+					dataType:"json",
+					success: function(result){
+						//var html = "";
+						if(result.success == "token"){
+							alert(result.msg);
+							window.parent.window.location.href = "login.html";
+						}else if(result.success){
+							console.log(result);
+							$(".showTKShade").show();
+							$(".showTkNum").html(result.data.ZILIAO_NUM);
+							//$("#showTermLibrary").val("");
+							$("#showTermLibrary").empty().val(result.data.CONTENT);
+						}else{
+							alert(result.msg);
+						}
+					},
+					error: function(){
+						alert("系统网络异常！");
+					}
+				});
+			}
+			//点击隐藏条款库查看内容
+			$(".showTKShade").click(function(){
+				$(this).hide();
+			});
+		</script>
+	</body>
+</html>

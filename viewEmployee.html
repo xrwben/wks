@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="Access-Control-Allow-Origin" content="*" />
+		<title>查看员工</title>
+		<link rel="stylesheet" href="css/common.css" />
+		<link rel="stylesheet" href="css/newEmployee.css" />
+		<style>
+	
+		</style>
+	</head>
+	<body>
+		<!--友情提示-->
+		<div id="loading">
+			<img src="images/loading.gif"/>
+		</div>
+		<div class="container">
+			<div class="header clearfix">
+				<div class="h_nav">
+					<h2>员工详情信息</h2>
+					<p><span>首页</span>/<span>员工管理</span>/<span>员工信息</span>/<span>员工详细信息</span></p>
+				</div>
+			</div>
+			<div class="main">
+				<ul class="nav clearfix">
+					<li class="hover">基本信息</li>
+					<li>薪酬信息</li>
+					<li>社保信息</li>
+					<li>合同信息</li>
+				</ul>
+				<form enctype="multipart/form-data" class="myForm" id="newEmpForm">
+					<div class="nav_con">
+						
+						<!--基本信息-->
+						<div class="tab con_baseInfo">
+							<h2 class="templet NAME"></h2>	
+							<!--基本信息-->
+							<div class="part part2">
+								<h3>
+									<i style="font-family:'Arial-BoldMT', 'Arial Bold', 'Arial';color:#00CC99;">▼</i>基本信息
+								</h3>
+								<div class="part_con">
+									<p>
+										<label><em>*</em>姓名：</label><span class="templet NAME"></span>
+									</p>
+									<p>
+										<label><em></em>英文名：</label><span class="templet ENGLISH_NAME"></span>
+									</p>
+									<p>
+										<label><em>*</em>性别：</label><span class="templet SEX"></span>
+									</p>
+									<p>
+										<label><em>*</em>证件号码（身份证）：</label><span class="templet IDCARD" ></span>
+									</p>
+									<p>
+										<label><em>*</em>手机号码：</label><span  class="templet PHONE"></span>
+									</p>
+									<p>
+										<label><em></em>QQ号：</label><span class="templet QQ"></span>
+									</p>
+									<p>
+										<label><em></em>微信号：</label><span class="templet WEIXIN"></span>
+									</p>
+									<p>
+										<label><em>*</em>邮箱：</label><span class="templet EMAIL" ></span>
+									</p>
+									<p>
+										<label><em>*</em>身份证地址：</label><span class="templet ADDRESS" ></span>
+									</p>
+									<p>
+										<label><em>*</em>开户行：</label><span class="templet BANK_TYPE" ></span>
+									</p>
+									<p>
+										<label><em>*</em>支行：</label><span class="templet BANK_CITY" ></span>
+									</p>
+									<p>
+										<label><em>*</em>银行卡号：</label><span class="templet BANK_ACCOUNT" ></span>
+									</p>
+									<p>
+										<label><em>*</em>现居住地：</label><span class="templet HOME" ></span>
+									</p>
+									<p>
+										<label><em>*</em>紧急联系人：</label><span class="templet EMERGENCY_MAN"></span>
+									</p>
+									<p>
+										<label><em>*</em>联系人手机号码：</label><span class="templet EMERGENCY_PHONE"></span>
+									</p>
+								</div>
+							</div>
+							<!--岗位信息-->
+							<div class="part part3">
+								<h3>
+									<i style="font-family:'Arial-BoldMT', 'Arial Bold', 'Arial';color:#00CC99;">▼</i>岗位信息
+								</h3>
+								<div class="part_con">
+										<p>
+											<label><em>*</em>员工编号：</label><span class="templet EMP_NUM" ></span>
+										</p>
+										<p>
+											<label><em>*</em>员工状态：</label><span class="templet RUZHI_STATUS" ></span>
+										</p>
+										<p>
+											<label><em>*</em>审批人：</label><span class="templet AGREE_MAN" ></span>
+										</p>
+										<p>
+											<label><em>*</em>入职时间（合同起时间）：</label><span class="templet TOWORK_TIME"></span>
+										</p>
+										<p>
+											<label><em>*</em>用工形式：</label><span class="templet CONTACT_TYPE" ></span>
+										</p>
+										<p>
+											<label><em>*</em>员工部门编码：</label><span class="templet LAST_DEP_NUM" ></span>
+										</p>
+										<p>
+											<label><em>*</em>公司：</label><span class="templet COMPANY" ></span>
+										</p>
+										<p>
+											<label><em>*</em>部门：</label><span class="templet DEPARTMENT" ></span>
+										</p>
+										<p>
+											<label><em>*</em>岗位类型：</label><span class="templet POST_TYPE" ></span>
+										</p>
+										<p>
+											<label><em>*</em>岗位：</label><span class="templet POST_NAME" ></span>
+										</p>
+										<p>
+											<label><em>*</em>职级：</label><span class="templet ZHIJI" ></span>
+										</p>
+										<p>
+											<label>职等：</label><span class="templet ZHIDENG" ></span>
+										</p>
+										<p>
+											<label><em>*</em>出勤方式：</label><span class="templet REST_TYPE" ></span>
+										</p>
+								</div>
+							</div>
+							<!--人士附加信息-->
+							<div class="part part4">
+								<h3>
+									<i style="font-family:'Arial-BoldMT', 'Arial Bold', 'Arial';color:#00CC99;">▼</i>人事附加信息
+								</h3>
+								<div class="part_con">
+										<p>
+											<label><em>*</em>服务类别：</label><span class="templet SERVICE_TYPE" ></span>
+										<p>
+											<label><em>*</em>考勤城市：</label><span class="templet WORK_CITY" ></span>
+										</p>
+										<p>
+											<label><em>*</em>服务经理：</label></label><span class="templet FUWU_JL" ></span>
+										</p>
+										<p>
+											<label><em>*</em>工资打款主体：</label><span class="templet MONEY_BODY" ></span>
+										</p>
+										<p>
+											<label><em>*</em>服务费打款主体：</label><span class="templet FUWU_BODY" ></span>
+										</p>
+										<p>
+											<label>入职备注：</label><span class="templet PERSONEL_BZ" ></span>
+										</p>
+										<p>
+											<label><em>*</em>调动类型：</label><span class="templet DIAODONG_TYPE" ></span>
+										</p>
+										<p>
+											<label><em>*</em>调动审批人：</label><span class="templet DIAODONG_AGREE_MAN" ></span>
+										</p>
+										<p>
+											<label><em>*</em>调动日期：</label><span class="templet DIAODONG_DATE" ></span>
+										</p>
+										<p>
+											<label><em>*</em>离职类型：</label><span class="templet LIZHI_TYPE" ></span>
+										</p>
+										<p>
+											<label><em>*</em>离职审批人：</label><span class="templet LIZHI_AGREE_MAN" ></span>
+										</p>
+										<p>
+											<label><em>*</em>离职日期：</label><span class="templet LIZHI_TIME" ></span>
+										</p>
+										<p>
+											<label>离职备注：</label><span class="templet LIZHI_BZ" ></span>
+										</p>
+								</div>
+							</div>
+							<!--入职附件-->
+							<div class="part part5">
+								<h3>
+									<i style="font-family:'Arial-BoldMT', 'Arial Bold', 'Arial';color:#00CC99;">▼</i>入职附件
+								</h3>
+								<div class="part_con upload">
+										<p class="file1">
+											<em>*</em>应聘或录取通知表：<button type="button" class="10"><b class="ADDMISSION_NOT">点击上传</b></button>
+											<span onclick="Look(10)"><img src="images/check.png"/>查看</span>
+										</p>
+										<p class="file2">
+											<em>*</em>入职审批表：<button type="button" class="1"><b class="APPLY_REG">点击上传</b></button>
+											<span onclick="Look(1)"><img src="images/check.png"/>查看</span>
+										</p>
+										<p>
+											<em>*</em>身份证正面：<button type="button" class="2"><b class="IDCARD_ZHE">点击上传</b></button>
+											<span onclick="Look(2)"><img src="images/check.png"/>查看</span>
+										</p>
+										<p>
+											<em>*</em>身份证反面：<button type="button" class="3"><b class="IDCARD_FAN">点击上传</b></button>
+											<span onclick="Look(3)"><img src="images/check.png"/>查看</span>
+										</p>
+										<p>
+											<em>*</em>银行卡签名：<button type="button" class="4"><b class="BANK_SIG">点击上传</b></button>
+											<span onclick="Look(4)"><img src="images/check.png"/>查看</span>
+										</p>
+										<p>
+											入职承诺书：<button type="button" class="5"><b class="TOWORK_COM">点击上传</b></button>
+											<span onclick="Look(5)"><img src="images/check.png"/>查看</span>
+										</p>
+										<p>
+											之前单位离职证明：<button type="button" class="6"><b class="OUTWORK_PRO">点击上传</b></button>
+											<span onclick="Look(6)"><img src="images/check.png"/>查看</span>
+										</p>
+										<p>
+											毕&ensp;业&ensp;证：<button type="button" class="7"><b class="GRADUATION_CARD">点击上传</b></button>
+											<span onclick="Look(7)"><img src="images/check.png"/>查看</span>
+										</p>
+										<p>
+											合同文件：<button type="button" class="8"><b class="OTHER1">点击上传</b></button>
+											<span onclick="Look(8)"><img src="images/check.png"/>查看</span>
+										</p>
+										<p>
+											其他证件：<button type="button" class="9"><b class="OTHER2">点击上传</b></button>
+											<span onclick="Look(9)"><img src="images/check.png"/>查看</span>
+										</p>
+										<p class="">
+											<em>*</em>调动审批：<button type="button"><b class="_ddsp DIAODONG_SP">点击上传</b></button>
+											<span onclick="Look(14)"><img src="images/check.png"/>查看</span>
+										</p>
+										<p class="">
+											<em>*</em>离职申请：
+											<button type="button"><b class="_lzsq LIZHI_SQ">点击上传</b></button>
+											<span onclick="Look(11)"><img src="images/check.png"/>查看</span>
+										</p>
+										<p class="">
+											<em>*</em>离职审批：
+											<button type="button"><b class="_lzsp LIZHI_SP">点击上传</b></button>
+											<span onclick="Look(12)"><img src="images/check.png"/>查看</span>
+										</p>
+										<p class="">
+											离职交接：<button type="button"><b class="_lzjj LIZHI_JJ">点击上传</b></button>
+											<span onclick="Look(13)"><img src="images/check.png"/>查看</span>
+										</p>
+								</div>
+							</div>
+						</div>
+						<!--薪酬信息-->
+						<div class="tab con_salaryInfo" style="display: none;" >
+							<h2 class="templet NAME"></h2>
+							<div class="part part1">
+								<h3>
+									<i style="font-family:'Arial-BoldMT', 'Arial Bold', 'Arial';color:#00CC99;">▼</i>当前薪资
+								</h3>
+								<div class="part_con">
+										<p>
+											<label><em>*</em>底薪类</label>
+											<table class="dxl"cellspacing="1" cellpadding="0">
+												<tr>
+													<th>基本工资</th>
+													<th>岗位工资</th>
+													<th>兼职工资</th>
+													<th>技术工资</th>
+													<th>其他</th>
+													<th>底薪总额</th>
+												</tr>
+												<tr>
+													<td><span class="templet BASE_SALARY" >0</span></td>
+													<td><span class="templet POST_SALARY" >0</span></td>
+													<td><span class="templet PART_SALARY" >0</span></td>
+													<td><span class="templet JISHU_SALARY" >0</span></td>
+													<td><span class="templet DIXIN_OTHER" >0</span></td>
+													<td><span class="templet ZONG_DIXIN" >0</span></td>
+												</tr>
+											</table>
+										</p>
+										<p>
+											<label><em>*</em>补助类</label>
+											<table class="dxl"cellspacing="1" cellpadding="0">
+												<tr>
+													<th>通讯补助</th>
+													<th>住宿补助</th>
+													<th>交通补助</th>
+													<th>餐饮补助</th>
+													<th>种子外交官补助</th>
+													<th>技术组长补助</th>
+													<th>全勤标准</th>
+													<th>全勤补助</th>
+													<th>外派补助</th>
+													<th>驻外补助</th>
+													<th>其它补助</th>
+													<th>总补助</th>
+												</tr>
+												<tr>
+													<td><span class="templet TONGXUN" ></span></td>
+													<td><span class="templet ZHUSU" ></span></td>
+													<td><span class="templet JIAOTONG" ></span></td>
+													<td><span class="templet CHIYIN" ></span></td>
+													<td><span class="templet ZHONGZI" ></span></td>
+													<td><span class="templet JISHU" ></span></td>
+													<td><span class="templet QUANQIN" ></span></td>
+													<td><span class="templet QUANQINBUZHU" ></span></td>
+													<td><span class="templet WAIPAI" ></span></td>
+													<td><span class="templet ZHUWAI" ></span></td>
+													<td><span class="templet BUZHU_OTHER" ></span></td>
+													<td><span class="templet ZONG_BUZHU" ></span></td>
+												</tr>
+											</table>
+										</p>
+										<p>
+											<label><em>*</em>绩效工资：</label><span class="temple JIXIAO_SALARY"></span>
+										</p>
+										<p>
+											<label>保底提成：</label><span class="templet TICHENG_SALARY"></span>
+										</p>
+										<p>
+											<label><em>*</em>工资总额：</label><span class="templet ZONG_GONGZI"></span>
+										</p>
+										<p>
+											<label><em>*</em>日工资：</label><span class="templet DAY_SALARY"></span>
+										</p>
+										<p>
+											<label>薪资补充说明：</label><span class="templet PLAN_COMMIT"></span>
+										</p>
+								</div>
+							</div>
+						</div>
+						<!--社保信息-->
+						<div class="tab con_socialInfo" style="display: none;">
+							<h2 class="templet NAME"></h2>
+							<div class="part part1">
+								<h3>
+									<i style="font-family:'Arial-BoldMT', 'Arial Bold', 'Arial';color:#00CC99;">▼</i>社保公积金
+								</h3>
+								<div class="part_con">
+										<p class="">
+											<label><em>*</em>社保状态：</label><span class="templet SHEBAO_STATUS"></span>
+										</p>
+										<p>
+											<label>户籍所在地：</label><span class="templet HUJI"></span>
+										</p>
+										<p>
+											<label><em>*</em>参保城市：</label><span class="templet SHEBAO_CITY"></span>
+										</p>
+										<p>
+											<label><em>*</em>社保打款主体：</label><span class="templet SHEBAO_BODY"></span>
+										</p>
+										<p>
+											<label><em>*</em>社保参保账户名称：</label><span class="templet SHEBAO_ACCOUNT"></span>
+										</p>
+										<p class="">
+											<label><em>*</em>公积金是否缴纳：</label><span class="templet ISGONGJIJIN"></span>
+										</p>
+										<p>
+											<label><em>*</em>公积金账户名称：</label><span class="templet GJJ_ACCOUNT"></span>
+										</p>
+										<p>
+											<table class=""cellspacing="1" cellpadding="0">
+												<tr>
+													<th>参保基数</th>
+													<th>单位缴费合计</th>
+													<th>个人缴费合计</th>
+													<th>总计</th>
+												</tr>
+												<tr>
+													<td><span class="templet SHEBAO_JS" ></span></td>
+													<td><span class="templet DANWEI_JF" ></span></td>
+													<td><span class="templet GEREN_JF" ></span></td>
+													<td><span class="templet SHEBAO_ZJ" ></span></td>
+												</tr>
+											</table>
+										</p>
+										<p>
+											<table class=""cellspacing="1" cellpadding="0">
+												<tr>
+													<th>公积金基数</th>
+													<th>单位公积金缴费合计</th>
+													<th>个人公积金缴费合计</th>
+													<th>公积金总计</th>
+												</tr>
+												<tr>
+													<td><span class="templet GONGJJ_JS" ></span></td>
+													<td><span class="templet DW_GONGJJ_HJ" ></span></td>
+													<td><span class="templet GR_GONGJJ_HJ" ></span></td>
+													<td><span class="templet GONGJJ_ZJ" ></span></td>
+												</tr>
+											</table>
+										</p>
+								</div>
+							</div>
+						</div>
+						<!--合同信息-->
+						<div class="tab con_contractInfo" style="display: none;">
+							<h2 class="NAME"></h2>
+							<div class="part part1 ">
+								<h3>
+									<i style="font-family:'Arial-BoldMT', 'Arial Bold', 'Arial';color:#00CC99;">▼</i>合同信息
+									<img src="images/bianji.png"><span>编辑</span>
+								</h3>
+								<div class="part_con">
+									<p>
+										<label><em>*</em>合同主体：</label><span class="templet MAIN_BODY"></span>
+									</p>
+									
+									<p>
+										<label><em>*</em>合同止时间：</label><span class="templet OUTWORK_TIME"></span>
+									</p>
+									<p>
+										<label><em>*</em>试用期月数：</label><span class="templet SHIYONG_TIME"></span>
+									</p>
+									<p>
+										<label><em>*</em>合同薪酬：</label><span class="templet HETONG_SALARY"></span>
+									</p>
+									<p>
+										<label><em>*</em>工作时间：</label><span class="templet WORK_TIME"></span>
+									</p>
+								</div>
+							</div>
+						</div>
+					</div>
+				<form>
+			</div>
+			<div class="footer_button">
+				<a href="javascript:void(0)" onclick="lookPDF()">查看PDF文件</a>
+				<a id="downPdf" href="">下载PDF文件</a>
+				<!--<form id="down" action="" method="get">
+					<input id="EMPLOYEE_ID" type="hidden" name="EMPLOYEE_ID" value="" />
+					<input id="pdfDown" type="submit" value="下载PDF文件"/>
+				</form>-->
+				<a id="reSendEmail" href="javascript:void(0)" onclick="reSendEmail()">重新发送邮件</a>
+			</div>
+		</div>
+		
+		<style>
+			
+		</style>
+		<!--查看图片-->
+		<div class="showImage">
+			<div class="pic">
+				<img src="" />
+			</div>
+		</div>
+		
+		
+		<script type="text/javascript" src="js/jquery-1.11.3.min.js" ></script>
+		<script type="text/javascript" src="js/serverURL.js" ></script>
+		<script type="text/javascript" src="js/dateFormat.js" ></script>
+		<script type="text/javascript" src="js/jquery.validate.js" ></script>
+		<script type="text/javascript" src="js/tab.js" ></script>
+		<script type="text/javascript" src="js/lookPicture.js" ></script>
+		
+		<script type="text/javascript">
+			var resultData = "";
+			$(function(){
+				var _url = window.location.href; //拿到地址
+				var parameter = _url.split("=")[1]; //分割字符创变成数组取得传过来的id
+				
+				//下载PDF文件
+				$("#downPdf").attr("href", serverPath +"/wks/emppdf/download?EMPLOYEE_ID="+parameter);
+				
+				$.ajax({
+					type : "post",
+					url :　serverPath+"/wks/employee/findById",
+					headers:{token:localStorage.getItem("token")},
+					data : {"EMPLOYEE_ID":parameter},
+					dataType:"JSON",
+					success : function(result){
+						//resultData = JSON.parse(result);
+						resultData = result;
+						console.log(resultData);
+						if(result.success == "token"){
+							alert(result.msg);
+							window.parent.window.location.href = "login.html";
+						}else if(resultData.success){
+							if(result.data.TOWORK_TIME || result.data.OUTWORK_TIME){
+								result.data.TOWORK_TIME = new Date(result.data.TOWORK_TIME).format("yyyy-MM-dd");
+								result.data.OUTWORK_TIME = new Date(result.data.OUTWORK_TIME).format("yyyy-MM-dd");
+							}
+							if(result.data.DIAODONG_DATE&&result.data.DIAODONG_DATE!=""){
+								result.data.DIAODONG_DATE = new Date(result.data.DIAODONG_DATE).format("yyyy-MM-dd");
+							}
+							if(result.data.LIZHI_TIME&&result.data.LIZHI_TIME!=""){
+								result.data.LIZHI_TIME = new Date(result.data.LIZHI_TIME).format("yyyy-MM-dd");
+							}
+							
+							for(var prop in result.data){
+								var txt = $("."+prop).text(result.data[prop]);
+							}
+							//判断文件是否上传
+							fileExist();
+							if(!result.data.PDF_SERVER_URL){
+								$("#downPdf").attr("disabled","disabled");
+							}
+						}else{
+							alert(resultData.msg);
+						}
+					},
+					error : function(){
+						console.log("错误！");
+					}
+				})	
+			});
+
+			//查看PDF文件
+		    function lookPDF(){
+		    	$.ajax({
+		    		type:"post",
+		    		url:serverPath+"/wks/emppdf/pdfService",
+		    		headers:{token:localStorage.getItem("token")},
+		    		data: {"EMPLOYEE_ID":resultData.data.EMPLOYEE_ID},
+		    		dataType : "json",
+		    		success: function(result){
+		    			console.log(result);
+		    			if(result.success == "token"){
+							alert(result.msg);
+							window.parent.window.location.href = "login.html";
+						}else if(result.success){
+		    				console.log(result);
+		    				console.log(resultData.data.EMPLOYEE_ID);
+		    				window.location.href = "fileDetails.html?_datas="+resultData.data.EMPLOYEE_ID;
+		    			}else{
+		    				alert("查看文件出错,确认是否已生成PDF文件!");
+		    			}
+	    			
+		    		},
+		    		error: function(){
+		    			console.log("系统网络异常!");
+		    		}
+		    	});
+		    }
+		    
+		    //重新发送邮件
+		    function reSendEmail(){
+		    	$.ajax({
+		    		type:"post",
+		    		url:serverPath+"/wks/emppdf/sendEmail",
+		    		headers:{token:localStorage.getItem("token")},
+		    		data: {"EMPLOYEE_ID":resultData.data.EMPLOYEE_ID},
+		    		dataType : "json",
+		    		success: function(result){
+		    			console.log(result);
+		    			if(result.success == "token"){
+							alert(result.msg);
+							window.parent.window.location.href = "login.html";
+						}else if(result.success){
+		    				alert(result.msg);
+		    			}else{
+		    				alert(result.msg);
+		    			}
+		    		},
+		    		error: function(){
+		    			console.log("系统网络异常!");
+		    		}
+		    	});
+		    }
+
+		
+		</script>
+	</body>
+</html>

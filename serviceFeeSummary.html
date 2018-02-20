@@ -1,0 +1,196 @@
+ <!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>服务费汇总</title>
+		<link rel="stylesheet" href="css/common.css" />
+		<link rel="stylesheet" href="css/table.css" />
+		<link rel="stylesheet" href="css/shadeModal.css" />
+		<style>
+			
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<div class="header clearfix">
+				<div class="h_nav">
+					<h2>服务费收取名单</h2>
+					<p><span>首页</span>/<span>服务费管理</span>/<span>服务费汇总</span></p>
+				</div>
+			</div>
+			<div class="main">
+				<div class="main_con fwfhzmd">
+					<div class="table_pagination fwfhzmd_pagination">
+						<div id="pagePlugins" class="pagePlugins"></div>
+						<div class="pagination_num">共<span class="jilu"></span>条记录，每页
+							<select>
+								<option value="5">5</option>
+								<option value="10">10</option>
+								<option value="15">15</option>
+								<option value="20">20</option>
+							</select>
+							条记录
+						</div>
+						<!--<div class="pagination_seach">
+							<input type="text" id="keyWord" name="keyword" value="" placeholder="请输入姓名/员工编号"/>
+							<button class="pagination_seach_btn" onclick="Search()"></button>
+						</div>
+						<button class="sx">筛&nbsp;选</button>-->
+					</div>
+					<div class="table_con fwfhzmd_table" style="overflow-x: auto;">
+						<table id="tableBox" class="" cellspacing="1" cellpadding="0"  style="width: 120%;">
+							
+						</table>
+					</div>
+					<div class="table_add">
+						<a class="produceData" href="javascript:void(0)" onclick="produceDatas()">生成数据</a>
+						<a id="downExcel" class="" href="">数据导出</a>
+					</div>
+					<p class="sm">
+						*说明：(1)根据当月一日在职人员数量+上月离职人员数量，和每个员工服务类型计算即可算得服务费总数。<br />
+        				&emsp;&emsp;&emsp;&emsp;(2)修改服务费类别必须在备注里面填写原因。
+					</p>
+				</div>
+			</div>
+		</div>
+		
+
+		<script type="text/javascript" src="js/jquery-1.11.3.min.js" ></script>
+		<script type="text/javascript" src="js/serverURL.js"></script>
+		<script type="text/javascript" src="plugins/jquery.pagination.js"></script>
+		<script type="text/javascript" src="js/jquery.cookie.js" ></script>
+		<script type="text/javascript">
+			var resultData = "";
+			var rows = $(".pagination_num select option:selected").val();  //每页显示数量
+			console.log(rows);
+			var currPage;  //当前页
+			var _url = serverPath + "/wks/fwftoal/list";
+			var _data = {"currPage":currPage+1,"currNum":rows};
+			var initFlag=true;  //标记
+			$(function() {
+				//给数据导出生成下载接口
+				$("#downExcel").attr("href",serverPath+"/wks/fwftoal/excel?roleId="+$.cookie("roleId")+"&name="+$.cookie("name"));
+				
+				PageCallback(0,null); 
+				if($.cookie("roleId") == "管理员"){
+					$(".produceData").hide();
+				}
+			});
+			$(".pagination_num select").change(function(){
+				initFlag=true;
+				rows = $(".pagination_num select option:selected").val();
+				PageCallback(0,null); 
+			});
+			//分页查询start
+			function PageCallback(currPage,jq){
+				_data.currPage = currPage + 1,
+				_data.currNum = rows;
+				$.ajax({
+					type:"POST",
+					url: _url,
+					headers:{token:localStorage.getItem("token")},
+					data: _data,
+					dataType:"JSON",
+					success:function(result){
+						resultData = result;
+						console.log(result);
+						if(result.success){
+							if(initFlag){
+								$("#pagePlugins").pagination(result.total,{
+									items_per_page:rows,
+									num_edge_entries:1,
+									num_display_entries:2,
+									callback:PageCallback
+								});
+								initFlag=false;
+							}
+							$(".jilu").text(result.total);
+							$("#tableBox").empty();
+							loadDataList(result.data,result.total);
+							$("#count").html(result.count.count);
+							$("#sum").html(result.count.sum);
+						}else{
+							alert(result.msg);
+						}
+					}
+					,error:function(){
+						alert("系统网络异常");
+					}
+				}); 
+			} 
+			//分页查询end
+			//表格载入数据start
+			function loadDataList(listData,total){
+				var tableTh =`<tr>
+								<th>序号</th>
+								<th>服务经理</th>
+								<th>打款主体</th>
+								<th>部门全称</th>
+//								<th>二级部门</th>
+								<th>服务类别</th>
+								<th>服务费</th>
+								<th>实收服务费</th>
+								<th>人数总计</th>
+								<th>应收总额</th>
+								<th>实收总额</th>
+								<th>备注</th>
+							</tr>`;
+				$("#tableBox").append(tableTh);
+				var	html="";
+				for(var i=0;i<listData.length;i++){
+					var datas=listData[i];
+					html += `<tr>
+								<td>${i+1}</td>
+								<td>${datas.FUWU_JL || ''}</td>
+								<td>${datas.FUWU_BODY || ''}</td>
+								<td>${datas.FIRST_DEP || ''}</td>
+//								<td>${datas.SECOND_DEP || ''}</td>
+								<td>${datas.SERVICE_TYPE || ''}</td>
+								<td>${datas.FUWUFEI || ''}</td>
+								<td>${datas.SSFUWUFEI || ''}</td>
+								<td>${datas.RENSHU_TOTAL || ''}</td>
+								<td>${datas.YS_TOTAL || ''}</td>
+								<td>${datas.SS_TOTAL || ''}</td>
+								<td>${datas.FFT_BZ || ''}</td>
+							</tr>`;
+				}
+				var hz =`<tr>
+							<td colspan="8">总计</td>
+							<td>${resultData.count.renshu}</td>
+							<td>${resultData.count.yinshou}</td>
+							<td>${resultData.count.yinshou}</td>
+							<td colspan="1"></td>
+						</tr>`
+				$("#tableBox").append(html).append(hz); 
+			}
+			//表格载入数据end
+			
+			
+			//生成数据
+			function produceDatas(){
+				$.ajax({
+		    		type:"post",
+		    		url:serverPath+"/wks/fwftoal/save",
+		    		headers:{token:localStorage.getItem("token")},
+		    		dataType : "json",
+		    		success: function(result){
+		    			console.log(result);
+		    			if(result.success == "token"){
+							alert(result.msg);
+							window.parent.window.location.href = "login.html";
+						}else if(result.success){
+		    				alert(result.msg);
+		    				window.location.reload();
+		    			}else{
+		    				alert(result.msg);
+		    			}
+	    			
+		    		},
+		    		error: function(){
+		    			console.log("网络异常!");
+		    		}
+		    	});
+			}
+		</script>
+	</body>
+</html>

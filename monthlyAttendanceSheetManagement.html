@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>月度考勤管理表</title>
+	<link rel="stylesheet" href="css/common.css" />
+	<link rel="stylesheet" href="css/table.css" />
+	<link rel="stylesheet" href="css/shadeModal.css" />
+	<style type="text/css">
+		#loading{width:100%;height:100%;background:rgba(0,0,0,0.5);position: fixed;display: none;}
+		#loading img{position: absolute;left: 0;top:0;right:0;bottom: 0;margin: auto;}
+	
+		.tjkqpz {
+			padding: 25px 0px;
+			border: 1px solid #CCCCCC;
+		}
+		
+		.tjkqpz button {
+			padding: 3px 8px;
+			margin-right: 15px;
+			background: none;
+			border: 1px solid #CCCCCC;
+		}
+	</style>
+</head>
+
+<body>
+	<!--导入数据友情提示-->
+	<div id="loading">
+		<img src="images/loading.gif"/>
+	</div>
+	<div class="container">
+		<div class="header clearfix">
+			<div class="h_nav">
+				<h2>月度考勤表管理</h2>
+				<p><span>首页</span>/<span>考勤管理</span>/<span>月度考勤表管理</span></p>
+			</div>
+		</div>
+		<div class="main">
+			<div class="main_con ydkqbgl">
+				<div class="table_pagination ygxx_pagination">
+					<div id="pagePlugins" class="pagePlugins"></div>
+					<div class="pagination_num">共<span class="jilu"></span>条记录，每页
+						<select name="currNum">
+							<option value="5">5</option>
+							<option value="10">10</option>
+							<option value="15">15</option>
+							<option value="20">20</option>
+							<option value="50">50</option>
+						</select> 条记录
+					</div>
+					<div class="pagination_seach">
+						<input type="text" id="keyWord" name="keyword" value="" placeholder="输入员工编号/姓名" />
+						<button class="pagination_seach_btn" onclick="Search()"></button>
+					</div>
+					<button class="sx" onclick="showModal()">筛&nbsp;选</button>
+				</div>
+				<div class="table_con" style="overflow-x: auto;">
+					<table id="tableBox" cellspacing="1" cellpadding="0" style="width: 180%;">
+						
+					</table>
+				</div>
+			</div>
+			<!--<div class="table_con ydkqbgl_table">
+				<table class="" cellspacing="1" cellpadding="0">
+				</table>
+			</div>-->
+			<div class="tjkqpz">
+				<!--<input type="file" /><button>点击上传</button>-->
+				<form id="uploadCertForm">
+					添加考勤凭证：
+					<input id="uploadCertInput" type="file" name="file" accept="image/*" />
+					<input type="button" value="确定" onclick="uploadCert()" />
+				</form>
+			</div>
+			<div class="table_add">
+				<!--<a class="xjyg" href="">生成数据</a>
+				<button class="xjyg" onclick="uploadData()">生成数据</button>-->
+				<form id="uploadDataForm">
+					导入数据：
+					<input id="uploadDataInput" type="file" name="file" value="" accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
+					<input type="button" value="导入数据" onclick="uploadData()" />
+				</form>
+				<!--<a class="xjyg" href="">数据导出</a>-->
+				<a class="delete" href="javascript:void(0)" onclick="createData()">生成数据</a>
+				<a class="delete" href="javascript:void(0)" onclick="delAll()">批量删除</a>
+			</div>
+			<p class="sm">
+				<em>*</em>说明：(1)对于新入职员工，本月入职，下月开始缴纳社保；对于离职员工，本月离职，下月停止缴纳社保；
+				<br>(2)生成考勤时间段为每月1到5号，参考日期为当月1日；
+				<br>(3)所有考勤数据，必须经过公示或经甲方经理级以上员工签字确认。
+			</p>
+		</div>
+	</div>
+	</div>
+	<div class="shade shade_sx">
+		<!--注册弹窗-->
+		<div class="modal modal_sx">
+			<div class="">
+				<form id="xs">
+					<h2>筛选</h2>
+					<p>
+						<b>考勤城市：</b>
+						<select id="workCity" name="">
+								<option value="">--请选择--</option>
+						</select>
+					</p>
+					<p>
+						<b>部门/门店：</b>
+						<input id="company">
+					</p>
+					<p>
+						<b>岗位：</b>
+						<input id="post">
+					</p>
+					<p>
+						<input id="qx" type="button" value="取&emsp;消" onclick="closeModal()" />
+						<input id="qd" type="button" value="确&emsp;定" onclick="qDselectInformation()" />
+					</p>
+				</form>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="js/serverURL.js"></script>
+	<script type="text/javascript" src="js/dateFormat.js" ></script>
+	<script type="text/javascript" src="js/ajaxfileupload.js" ></script>
+	<script type="text/javascript" src="plugins/jquery.pagination.js"></script>
+	<script type="text/javascript" src="js/jquery.cookie.js" ></script>
+	<script type="text/javascript">
+		var rows = $(".pagination_num select option:selected").val();  //每页显示数量
+		console.log(rows);
+		var keyword = $("#keyWord").val();  //获取搜索关键字
+		console.log(rows);
+		var currPage;  //当前页
+		var initFlag=true;  //标记
+		var workCity = $("#workCity").val();
+		var company = $("#company").val();
+		var post = $("#post").val();
+		// var _url = serverPath+'/wks/kaoqin/list';
+		var _url =serverPath + '/wks/kaoqin/list';
+		var _data = {
+			"currPage":currPage+1,
+			"currNum":rows,
+			"keyword":keyword,
+			"company":company,
+			"post":post,
+			"workCity":workCity
+		};
+		$(function() {
+			PageCallback(0,null); 
+			checkDatas();
+			if($.cookie("roleId") == "管理员"){
+				$(".table_add").hide();
+				$(".tjkqpz").hide();
+			}
+			
+		});
+		$(".pagination_num select").change(function(){
+			initFlag=true;
+			rows = $(".pagination_num select option:selected").val();
+			PageCallback(0,null); 
+		});
+		//分页查询start
+		function PageCallback(currPage,jq){
+			_data.currPage = currPage + 1,
+			_data.currNum = rows,
+			$.ajax({
+				type:"POST",
+				url: _url,
+				headers:{token:localStorage.getItem("token")},
+				data: _data,
+				dataType:"JSON",
+				success:function(result){
+					if (result.success == 'token') {
+						alert(result.msg);
+						console.log(result.msg);
+						window.parent.location.href = 'login.html';
+					}
+					if(result.success){
+						console.log(result);
+						if(initFlag){
+							$("#pagePlugins").pagination(result.total,{
+								items_per_page:rows,
+								num_edge_entries:1,
+								num_display_entries:2,
+								callback:PageCallback
+							});
+							initFlag=false;
+						}
+						$(".jilu").text(result.total);
+						$("#tableBox").empty();
+						loadDataList(result.data,result.total);
+					}else{
+						alert(result.msg);
+					}
+				}
+			}); 
+		} 
+		//分页查询end
+		//表格载入数据start
+		function loadDataList(listData,total){
+			var tableTh = `<tr>
+							<th></th>
+							<th>序号</th>
+							<th>考勤城市</th>
+							<th>员工编号</th>
+							<th>身份证号</th>
+							<th>姓名</th>
+							<th>部门</th>
+							<th>职位</th>
+							<th>标准出勤天数</th>
+							<th>月排班天数</th>
+							<th>月实际出勤天数</th>
+							<th>迟到30分钟内</th>
+							<th>迟到30分钟上</th>
+							<th>扣款漏卡</th>
+							<th>事假</th>
+							<th>病假</th>
+							<th>婚假</th>
+							<th>丧假</th>
+							<th>年假</th>
+							<th>护理假</th>
+							<th>产假</th>
+							<th>旷工</th>
+							<th>加班换薪时数</th>
+							<th>缺勤天数</th>
+							<th>起薪日期</th>
+							<th>最后工作日期</th>
+							<th>备注</th>
+						  </tr>`;
+
+			$("#tableBox").append(tableTh);
+			var	html="";
+			for(var i=0;i<listData.length;i++){
+				var datas=listData[i];
+				if(datas.OPERATION_TIME || datas.LAST_TIME){
+					datas.OPERATION_TIME = new Date(datas.OPERATION_TIME).format("yyyy-MM-dd");
+					datas.LAST_TIME = new Date(datas.LAST_TIME).format("yyyy-MM-dd");
+					
+				}
+				html += `<tr>
+							<td><input class="del" type="checkbox" name="kaoqingId" value="${datas.KAOQIN_ID}"/></td>
+							<td>${i+1}</td>
+							<td>${datas.WORK_CITY || ''}</td>
+							<td>${datas.EMP_NUM || ''}</td>
+							<td>${datas.ID_CARD || ''}</td>
+							<td>${datas.NAME || ''}</td>
+							<td>${datas.COMPANY || ''}</td>
+							<td>${datas.POST || ''}</td>
+							<td>${datas.WORK_DAY || ''}</td>
+							<td>${datas.ARRANGE_DAY || ''}</td>
+							<td>${datas.REAL_DAY || ''}</td>
+							<td>${datas.PENALTY_LT || ''}</td>
+							<td>${datas.PENALTY_GT || ''}</td>
+							<td>${datas.FINE || ''}</td>
+							<td>${datas.LEAVE_COM || ''}</td>
+							<td>${datas.LEAVE_SICK || ''}</td>
+							<td>${datas.LEAVE_MAR || ''}</td>
+							<td>${datas.LEAVE_FUNERAL || ''}</td>
+							<td>${datas.LEAVE_ANNUAL || ''}</td>
+							<td>${datas.LEAVE_NURS || ''}</td>
+							<td>${datas.LEAVE_MNT || ''}</td>
+							<td>${datas.ABSENTEEISM || ''}</td>
+							<td>${datas.DUIHUAN || ''}</td>
+							<td>${datas.ATTENDANCE || ''}</td>
+							<td>${datas.FIRST_DAY || ''}</td>
+							<td>${datas.LAST_TIME || ''}</td>
+							<td>${datas.KAO_QIN_OTHER || ''}</td>
+						</tr>`;
+			}
+			$("#tableBox").append(html); 
+		}
+		//表格载入数据end
+		
+		//搜索功能
+		function Search(){
+			keyword = $("#keyWord").val();
+			workCity = $("#workCity").val();
+			company = $("#company").val();
+			post = $("#post").val();
+			// _data = {"currPage":currPage+1,"currNum":rows,"keywords":keyword,"FIND_RUZHI_STATUS":'2'};
+			_data = {
+				"currPage":currPage+1,
+				"currNum":rows,
+				"keyword":keyword,
+				"company":company,
+				"post":post,
+				"workCity":workCity
+			};
+			initFlag=true;
+			PageCallback(0);
+		}
+		//筛选弹窗
+		function showModal(){
+			$(".shade").show();
+			cityListAll();
+		}
+		//获取城市名称
+		function cityListAll(){
+			$.ajax({
+				type:"post",
+				url: serverPath + "/wks/city/listAll",
+				headers:{token:localStorage.getItem("token")},
+				dataType:"json",
+				success: function(result){
+					console.log(result);
+					var html = "";
+					if(result.success == "token"){
+						alert(result.msg);
+						window.parent.window.location.href = "login.html";
+					}else if(result.success){
+						for(var i=0;i<result.data.length;i++){
+							html += "<option value="+result.data[i].CITY+">" + result.data[i].CITY +"</option>";
+						}
+						$("#workCity").empty().append("<option value=''>--请选择--</option>").append(html);
+					}else{
+						alert(result.msg);
+					}
+				},
+				error: function(){
+					alert("系统网络异常！");
+				}
+			});
+		}
+		//筛选
+		function qDselectInformation(){
+			initFlag=true;
+			workCity = $("#workCity").val();
+			company = $("#company").val();
+			post = $("#post").val();
+			_url = serverPath + '/wks/kaoqin/list';
+			_data = {
+				"currPage":currPage+1,
+				"currNum":rows,
+				"keyword":keyword,
+				"company":company,
+				"post":post,
+				"workCity":workCity
+			};
+			PageCallback(0);
+			closeModal();
+		}
+		
+		
+		// 导入数据		
+		function uploadData(_target){
+			var formData = new FormData($("#uploadDataForm")[0]); 
+			var file = $('#uploadDataInput')[0].files[0];
+			console.log(file);
+			if(!file){
+                 alert("请选择文件");
+                 return false;
+             }else if (file.name.indexOf('.xlsx') < 0) {
+				alert('请选择Excel文件');
+				return;
+			}
+			$.ajax({  
+				url:serverPath + '/wks/kaoqin/readKaoqinExcel',
+				headers:{token:localStorage.getItem("token")},
+				type: 'POST',  
+				data: formData,  
+				async: true,  
+				cache: false,  
+				contentType: false,  
+				processData: false, 
+				beforeSend:function(){
+					$("#loading").show();
+				},
+				success: function (returndata) {  
+					//console.log(returndata);
+					alert(returndata.msg); 
+					window.location.reload();
+				},  
+				error: function (returndata) {  
+					alert('上传失败');
+				}  
+			}); 
+		}
+
+		// 上传考勤拼证
+		function uploadCert(_target){
+			console.log("11");
+			var formCert = new FormData($("#uploadCertForm")[0]); 
+			var file = $('#uploadCertInput')[0].files[0];
+			console.log(file);
+			if(!file){
+                 alert("请选择文件");
+//               return false;
+             }else{
+				$.ajax({  
+					url: serverPath + '/wks/kaoqin/upload',
+					headers:{token:localStorage.getItem("token")},
+					type: 'POST',  
+					data: formCert,  
+					async: false,  
+					cache: false,  
+					contentType: false,  
+					processData: false,  
+					success: function (returndata) {  
+						if (returndata.success) {
+							alert('上传成功');  
+						} else {
+							alert(returndata.msg);  
+						}
+					},  
+					error: function (returndata) {  
+						alert('系统网络异常！');
+					}  
+				}); 
+			}
+		}
+		
+		//检测数据
+		function checkDatas(){
+			$.ajax({
+				type:"post",
+				url:serverPath + "/wks/kaoqin/validate",
+				headers:{token:localStorage.getItem("token")},
+				dataType : "json",
+				success: function(result){
+					if(result.success){
+						alert(result.msg);
+					}
+				},
+				error : function(){
+					alert("系统网络异常！");
+				}
+			});
+		}
+		//关闭弹窗
+		function closeModal(){
+			$(".shade").fadeOut();
+			$("#xs")[0].reset();
+		}
+		
+		//生成数据
+		function createData(){
+			if(!confirm("是否确认生成数据?")){
+				return null;
+			}	
+			$.ajax({
+				type:"post",
+				url:serverPath + "/wks/kaoqin/createDataBase",
+				headers:{token:localStorage.getItem("token")},
+				dataType : "json",
+				beforeSend:function(){
+					$("#loading").show();
+				},
+				success: function(result){
+					console.log(result);
+					if(result.success){
+						alert(result.msg);
+						window.location.reload();   
+					}else{
+						alert(result.msg);
+					}
+				},
+				complete: function(){
+			     	$("#loading").hide();
+			    },
+				error : function(){
+					alert("系统网络异常！");
+				}
+			});
+		}
+		
+		//删除数据
+		function delAll(){
+			if(!confirm("是否确认删除?")){
+				return null;
+			}
+			var delDatas = [];
+			$(".del:checked").each(function(){
+				delDatas.push($(this).val());
+			})
+			//console.log(delDatas);
+			
+			$.ajax({
+				type:"post",
+				url:serverPath + "/wks/kaoqin/deleteAll",
+				headers:{token:localStorage.getItem("token")},
+				dataType : "json",
+				data:{"kaoqingId":delDatas},
+				traditional:true,  //变成数组
+				beforeSend:function(){
+					$("#loading").show();
+				},
+				success: function(result){
+					if(result.success){
+						alert(result.msg);
+						window.location.reload();   
+					}else{
+						alert(result.msg);
+					}
+				},
+				complete: function(){
+			     	$("#loading").hide();
+			    },
+				error : function(){
+					alert("系统网络异常！");
+				}
+			});
+		}
+		
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,528 @@
+ <!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>岗位资料管理</title>
+		<link rel="stylesheet" href="css/common.css" />
+		<link rel="stylesheet" href="css/shadeModal.css" />
+		
+		<style>
+			.gwzlgl h3{font-weight: 400;}
+			.gwzlgl h3 a{width:35px;height:30px;background:#37C1A0;color:#fff;
+				display: inline-block;text-align: center;
+				font-size: 18px;font-weight: 700;line-height:30px;
+				margin-left: 50px;}
+			.gwzlgl .part_con{margin-top:35px;}
+			.gwzlgl .part_con h3{font-weight: bold;}
+			.gwzlgl .part_con h3 span{cursor: pointer;}
+			.gwzlgl .part_con h3 i{border-top:5px solid transparent;
+				border-right:5px solid transparent;border-bottom:5px solid transparent;
+				border-left:10px solid black;display: inline-block;
+				margin:0px 10px;}
+			.gwzlgl .part_con h3 i.show{border-top:10px solid black;
+				border-right:5px solid transparent;border-bottom:5px solid transparent;
+				border-left:5px solid transparent;vertical-align:middle;display: inline-block;
+				margin:0px 10px;}	
+			.gwzlgl .part_con h3 a{width:20px;height:18px;background:#37C1A0;font-weight: 400;line-height:16px;
+				margin-left: 20px;}
+			.list_con p{margin-top:15px;margin-left: 15px;margin-bottom:15px;}
+			.list_con button{width:100px;background: #fff;border:1px solid #ccc;}
+			.list_con span{margin:0px 10px;cursor: pointer;}
+			.list_con span img{width:15px;height:15px;}	
+			.modal_gwzl{width:60%;}
+			#gwzlmc{width:285px;height:25px;}
+			.btn{margin-top:35px;}
+		</style>
+		
+	</head>
+	<body>
+		<div class="content">
+		<div class="container">
+			<div class="header clearfix">
+				<div class="h_nav">
+					<h2>岗位资料管理</h2>
+					<p><span>首页</span>/<span>新增内容管理</span>/<span>岗位资料管理</span></p>
+					
+				</div>
+			</div>
+			<div class="main">
+				<div class="gwzlgl">
+					<h3>沃克斯人力资源管理系统入职资料管理<a href="javascript:void(0);" onclick="showModal1()">+</a></h3>
+ 					<div class="part_con">
+						<div class="typeName">
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<!--岗位资料管理弹窗 start-->
+		<div class="shade1 shade_gwzl">
+			<div class="modal modal_gwzl">
+				<div class="">
+					<h2>添加岗位资料</h2>
+					<div class="addGwName">
+						<div>
+							<b>岗位资料名称：</b>
+							<div>
+								<input type="text" id="gwzlmc" name="typename" value="" />	
+							</div>
+						</div>
+					</div>
+					<p class="btn">
+						<input id="qx" type="button" value="取&emsp;消" onclick="closeModal1()"/>
+						<input id="qd" type="button" value="增&emsp;加" onclick="addName()"/>
+					</p>
+				</div>
+			</div>
+		</div>
+		<!-- 岗位资料管理弹窗 end -->
+		
+		<!-- 隐藏的二级窗口 start -->
+		<div class="shade2 shade_gwzl">
+			<div class="modal modal_gwzl">
+				<div class="">
+					<h2 id="tkzl">添加条款资料</h2>
+					<div class="addTkName">
+						<div>
+							<div>
+								<span class="textCondition1">城市：</span><select id="city" onchange="findTk();"></select>
+								<span class="textCondition2">岗位：</span><select id="posts" onchange="findTk();"></select>
+								<span class="textCondition3">公司：</span><select id="zj" onchange="findTk();"></select>
+								<input type="hidden" id="ziliaoTypeId"/>
+							</div><br/>
+							<div class="editor" style="width: 100%;height: 100%">
+								<textarea  name="" id="textarea1" rows="13" cols="200" style="resize:none;width:100%;height:100%" ></textarea>
+							</div>
+						</div>
+					</div>
+					<p class="btn">
+						<input id="qx" type="button" value="取&emsp;消" onclick="closeModal2()"/>
+						<input id="qd" type="button" value="增&emsp;加" onclick="addTk();"/>
+						<input id="bc" type="button" value="保&emsp;存" onclick="saveTk();"/>
+					</p>
+				</div>
+			</div>
+		</div>
+		<!-- 隐藏的二级窗口 end -->
+		<!--<div class="editor" style="width: 100%;height: 100%">
+			<textarea  name="" id="textarea1" style="width: 100%;height: 100%">
+			</textarea>
+		</div>-->
+		</div>
+		
+		
+		<script type="text/javascript" src="js/jquery-1.11.3.min.js" ></script>
+		<script type="text/javascript" src="js/serverURL.js" ></script>
+		<script type="text/javascript">
+		
+			//进来显示条款接口
+			$(function(){
+				$.ajax({
+					type:"post",
+					url:serverPath+"/wks/ziliaotype/list",
+					headers:{token:localStorage.getItem("token")},
+					dataType : "json",
+					success : function(result){
+						if(result.success==true){
+							console.log(result);
+							$(".typeName").html("");//清空旧数据
+							for(var i=0;i<result.data.length;i++){
+								var div='<div>'+
+								'<h3><i></i><span onclick="showTkList(this);">'+result.data[i].ZILIAO_TYPE_NAME+'</span><a href="javascript:void(0);" onclick="showModal2(this);">+</a><a href="javascript:void(0);" onclick="deleteTypename(this);">-</a></h3>'+
+								'<input type="hidden" value="'+result.data[i].ZILIAOTYPE_ID+'"/>'+
+								'<div class="list_con"></div>'+
+							'</div>';
+								$(".typeName").append(div);
+							}
+
+						}else{
+							alert(result.msg);
+						}
+					},
+					error : function(){
+						alert("系统网络异常!");
+					}
+				})		
+			})
+			
+			//新增条款库详情
+			function addTk(){
+				var city = $("#city option:selected").val();
+				var posts = $("#posts").val();
+				var zj = $("#zj").val();
+				var ziliaoType = $("#ziliaoTypeId").val();
+				var content = $("#textarea1").val();
+				
+				if(!confirm("是否确认保存?")){
+					return null;
+				}
+				//岗位
+				$.ajax({
+					url:serverPath+"/wks/ziliao/save",
+					headers:{token:localStorage.getItem("token")},
+					type:"post",
+					data:{"workCity":city,"posts":posts,"zhiji":zj,"content":content,"ziliaoType":ziliaoType},
+					dataType:"json",
+					success:function(result){
+						if(result.success==true){
+							alert(result.msg);
+							//location.go(-1);
+							window.location.reload();
+							closeModal2();
+						}
+					},error:function(){
+						alert("系统网络异常");
+					}
+					
+				})
+			}
+			
+			//增加条款库类名
+			function addName(){
+				console.log($("#gwzlmc").val());
+				$.ajax({
+					type:"post",
+					url:serverPath+"/wks/ziliaotype/save",
+					headers:{token:localStorage.getItem("token")},
+					data : {"typename":$("#gwzlmc").val()} ,
+					dataType : "json",
+					success : function(result){
+						if(result.success == true){
+							alert(result.msg);
+							location.reload();
+						}else{
+							alert(result.msg);
+							//window.parent.window.location.href = "login.html";
+						}
+					},
+					error : function(){
+						alert("系统网络异常!");
+					}
+				})	
+			}
+			//显示条款列表
+			function showTkList(obj){
+				$(obj).parent().find("i").addClass("show");
+				var typeId = $(obj).parent().next().val();
+				$.ajax({
+					type:"post",
+					url:serverPath+"/wks/ziliao/listByTypeId",
+					headers:{token:localStorage.getItem("token")},
+					data:{"ziliaoType":typeId},
+					dataType:"json",
+					success:function(result){
+						if(result.success==true){
+							$(obj).parent().next().next().html("");
+							var name = $(obj).html();
+							for(var i=0;i<result.data.length;i++){
+								var p = 
+									'<p>'+name+(i+1)+': <button class="showEditor" onclick="editInfo(this);">编辑内容</button>'+
+									'<span onclick="showTk(this)"><img src="images/check.png"/>查看</span>'+
+										'<span onclick="deleteItem(this)"><img src="images/delete.png"/>删除</span>'+
+										'<input type="hidden" value="'+result.data[i].ZILIAO_ID+'" />'+
+										'<input type="hidden" value="'+result.data[i].ZILIAO_NUM+'" />'+
+										'<input type="hidden" value="'+result.data[i].CONTENT+'" />'+
+									'</p>';
+								$(obj).parent().next().next().append(p);	
+							}
+						}else{
+							alert(resutl.msg);
+						}
+					},
+					error:function(){
+						alert("系统网络异常");
+					}
+						
+				});
+			}
+			
+			//筛选弹窗
+			function showModal1(){
+				$(".shade1").fadeIn(); 
+				
+			}
+			//显示新增条款
+			function showModal2(obj){
+				$("#bc").hide();
+				$("#bc").prev().show();
+				$("#city").show();
+				$("#posts").show();
+				$("#zj").show();
+				$("#tkzl").html("新增条款内容");
+				$(".textCondition1").html("城市:");
+				$(".textCondition2").html("岗位:");
+				$(".textCondition3").html("公司:");
+				$("#textarea1").val("");
+				$(".shade2").fadeIn();
+				$("#ziliaoTypeId").val($(obj).parent().next().val());
+				var UrlList = new Array();
+				UrlList.push(serverPath +"/wks/city/listAll");//城市
+				UrlList.push(serverPath +"/wks/company/listAll");//职级
+				UrlList.push(serverPath +"/wks/posttype/listAll");//岗位
+				//遍历获取岗位城市职级
+				for(var j=0;j<UrlList.length;j++){
+				    (function(_url){
+				        $.ajax({
+				            url:_url,
+				            headers:{token:localStorage.getItem("token")},
+				            type:"GET",
+				            dataType:"json",
+				            async:true,
+				            cache:false,
+				            timeout:5000,
+				            complete:function(xhr){
+				            	ajaxComplete(_url,xhr.responseJSON.data,UrlList);
+				            }
+				        }); 
+				    })(UrlList[j]);
+				}
+				
+			}
+			var city;
+			var posts;
+			var zj;
+			function ajaxComplete(url,data,UrlList){
+				if(url==UrlList[0]){
+					$("#city").html("");
+					for(var i=0;i<data.length;i++){
+						var option = '<option value="'+data[i].CITY+'">'+data[i].CITY+'</option>';
+						$("#city").append(option);			
+					}
+					city = data[0].CITY;
+				}
+				if(url==UrlList[1]){
+					$("#zj").html("");
+					for(var i=0;i<data.length;i++){
+						var option = '<option value="'+data[i].COMPANY+'">'+data[i].COMPANY+'</option>';
+						$("#zj").append(option);			
+					}
+					zj=data[0].COMPANY;
+				}
+				if(url==UrlList[2]){
+					$("#posts").html("");
+					for(var i=0;i<data.length;i++){
+						var option = '<option value="'+data[i].POST_TYPE+'">'+data[i].POST_TYPE+'</option>';
+						$("#posts").append(option);			
+					}
+					posts=data[0].POST_TYPE;
+				}
+				//加载条款内容
+				$.ajax({
+					type:"post",
+					url:serverPath + "/wks/ziliao/findByZiliaoNum",
+					headers:{token:localStorage.getItem("token")},
+					data:{"workCity":city,"posts":posts,"zhiji":zj},
+					dataType:"json",
+					success:function(result){
+						if(result.success==true){
+							$("#textarea1").val(result.data.CONTENT);
+						}
+					},
+					error:function(){
+						alert("系统网络异常");
+					}
+						
+				});
+			}
+			//修改条款详情
+			function editInfo(obj){
+				$(".shade2").fadeIn();
+				$("#bc").prev().hide();
+				$("#bc").show();
+				//设置城市，岗位，职级
+				
+				//设置条款内容
+				var content = $(obj).parent().find("input").eq(2).val();
+				$("#textarea1").val(content);
+				var id = $(obj).parent().find("input").eq(0).val();
+				$("#ziliaoTypeId").val(id);
+				var num = $(obj).parent().find("input").eq(1).val();
+				$(".textCondition1").parent().html(num);
+				//var content = $("#textarea1").val();
+				$("#city").hide();
+				$("#posts").hide();
+				$("#zj").hide();
+				$("#tkzl").html("编辑条款内容");
+				$(".textCondition1").html("");
+				$(".textCondition2").html("");
+				$(".textCondition3").html("");
+				
+			}
+			//保存修改条款内容
+			function saveTk(obj){
+				var content = $("#textarea1").val();
+				var id = $("#ziliaoTypeId").val();
+				var content = $("#textarea1").val();
+				if(!confirm("是否确认修改?")){
+					return null;
+				}
+				 
+				$.ajax({
+					type:"post",
+					url:serverPath+"/wks/ziliao/edit",
+					headers:{token:localStorage.getItem("token")},
+					data:{"ziliaoId":id,"content":content},
+					dataType:"json",
+					success:function(result){
+						if(result.success==true){
+							alert(result.msg);
+							//location.go(-1);
+							window.location.reload();
+						}else{
+							alert(result.msg);
+						}
+					},
+					error:function(){
+						alert("系统网络异常");
+					}
+						
+				}); 
+			}
+			//根据岗位职级和城市查询条款内容
+			function findTk(){
+				var city = $("#city").val();
+				var posts = $("#posts").val();
+				var zj = $("#zj").val();
+				$.ajax({
+					type:"post",
+					url:serverPath+"/wks/ziliao/findByZiliaoNum",
+					headers:{token:localStorage.getItem("token")},
+					data:{"workCity":city,"posts":posts,"zhiji":zj},
+					dataType:"json",
+					success:function(result){
+						if(result.success==true){
+							//console.log(result.data);
+							if(typeof(result.data)=="undefined"){
+								$("#textarea1").val("");
+							}else{
+								$("#textarea1").val(result.data.CONTENT);
+							}
+						}
+					},
+					error:function(){
+						alert("系统网络异常");
+					}
+						
+				});
+				
+			}
+			//查看条款内容
+			function showTk(obj){
+				$(".shade2").fadeIn();
+				$("#bc").prev().hide();
+				$("#bc").prev().prev().val("返 回");
+				$("#bc").hide();
+				
+				var id = $(obj).next().next().val();
+				
+				$("#city").hide();
+				$("#posts").hide();
+				$("#zj").hide();
+				$("#tkzl").html("查看条款内容");
+				
+				$(".textCondition1").html("");
+				$(".textCondition2").html("");
+				$(".textCondition3").html("");
+				
+				$.ajax({
+					type:"post",
+					url:serverPath+"/wks/ziliao/findById",
+					headers:{token:localStorage.getItem("token")},
+					data:{"ziliaoId":id},
+					dataType:"json",
+					success:function(result){
+						if(result.success==true){
+							console.log(result.data);
+							$("#textarea1").val(result.data.CONTENT);
+							if(typeof(result.data)=="undefined"){
+								$("#textarea1").val("");
+							}else{
+								$("#textarea1").val(result.data.CONTENT);
+								$("#textarea1").attr("readonly","readonly");
+								$(".textCondition1").parent().html(result.data.ZILIAO_NUM);
+							}
+						}else{
+							alert("删除失败");
+						}
+					},
+					error:function(){
+						alert("系统网络异常!");
+					}
+						
+				});
+			}
+			//删除某条款
+			function deleteItem(obj){
+				var id = $(obj).next().val();
+				if(!confirm("是否确认删除条款?")){
+					return null;
+				}
+				
+				$.ajax({
+					type:"post",
+					url:serverPath+"/wks/ziliao/delete",
+					headers:{token:localStorage.getItem("token")},
+					data:{"ziliaoId":id},
+					dataType:"json",
+					success:function(result){
+						if(result.success==true){
+							alert(result.msg);
+							//location.go(-1);
+							window.location.reload();
+						}else{
+							alert(result.msg);
+						}
+					},
+					error:function(){
+						alert("系统网络异常");
+					}
+						
+				});
+				
+			}
+			
+			//删除大类
+			function deleteTypename(obj){
+				var id = $(obj).parent().next().val();
+				console.log(id);
+				if(!confirm("是否确认删除条款?")){
+					return null;
+				}
+				
+				$.ajax({
+					type:"post",
+					url:serverPath+"/wks/ziliaotype/delete",
+					headers:{token:localStorage.getItem("token")},
+					data:{"ziliaoTypeId":id},
+					dataType:"json",
+					success:function(result){
+						if(result.success==true){
+							alert(result.msg);
+							//location.go(-1);
+							window.location.reload();
+						}else{
+							alert(result.msg);
+						}
+					},
+					error:function(){
+						alert("系统网络异常!");
+					}
+						
+				});
+				
+			}
+			
+			//关闭弹窗
+			function closeModal1(){
+				$(".shade1").fadeOut();	
+			}
+			function closeModal2(){
+				$(".shade2").fadeOut();
+				window.location.reload();
+			}
+		</script>
+	</body>
+</html>
+

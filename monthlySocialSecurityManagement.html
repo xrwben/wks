@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>月度社保表管理</title>
+		<link rel="stylesheet" href="css/common.css" />
+		<link rel="stylesheet" href="css/table.css" />
+		<link rel="stylesheet" href="css/shadeModal.css" />
+		<style>
+			#loading{width:100%;height:100%;background:rgba(0,0,0,0.5);position: fixed;display: none;}
+			#loading img{position: absolute;left: 0;top:0;right:0;bottom: 0;margin: auto;}
+		</style>
+	</head>
+	<body>
+		<!--导入数据友情提示-->
+		<div id="loading">
+			<img src="images/loading.gif"/>
+		</div>
+		<div class="container">
+			<div class="header clearfix">
+				<div class="h_nav">
+					<h2>员工基本信息</h2>
+					<p><span>首页</span>/<span>社保管理</span>/<span>月度社保表管理</span></p>
+				</div>
+			</div>
+			<div class="main">
+				<div class="main_con ydsbbgl">
+					<div class="table_pagination ydsbbgl_pagination">
+						<div class="pagePlugins" id="pagePlugins"></div>
+						<div class="pagination_num">共<span class="jilu"></span>条记录，每页
+							<select name="currNum">
+								<option value="5">5</option>
+								<option value="10">10</option>
+								<option value="15">15</option>
+								<option value="20">20</option>
+							</select>
+							条记录
+						</div>
+						<div class="pagination_seach">
+							<input type="text" id="keyWord" name="keyword" value="" placeholder="输入员工编号/姓名/身份证号" />
+							<button class="pagination_seach_btn" onclick="Search()"></button>
+						</div>
+						<!--<button class="sx" onclick="showModal()">筛&nbsp;选</button>-->
+					</div>
+					<div class="table_con">
+						<table id="tableBox" class="" cellspacing="1" cellpadding="0">
+							
+						</table>
+					</div>
+					<!--<div class="table_add">
+						<a class="" href="">生成数据</a>
+						<a class="" href="">数据导出</a>
+						<a class="" href="">批量修改</a>
+					</div>-->
+					<div class="table_add">
+						<!--<a class="xjyg" href="">生成数据</a>
+						<button class="xjyg" onclick="uploadData()">生成数据</button>-->
+						<form id="uploadDataForm">
+							导入数据：
+							<input id="uploadDataInput" type="file" name="file" value="" accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>
+							<input type="button" value="导入数据" onclick="uploadData()"/>
+						</form>
+						<!--<a class="xjyg" href="">数据导出</a>-->
+						<a class="delete" href="javascript:void(0)" onclick="delAll()">批量删除</a>
+					</div>
+					<p class="sm">
+						*说明：(1)对于新入职员工，本月入职，下月开始缴纳社保；对于离职员工，本月离职，下月停止缴纳社保；<br />
+        				&emsp;&emsp;&emsp;(2)根据当月一日在职人员数量+上月离职人员数量，和每个员工服务类型计算即可算得服务费总数。
+					</p>
+				</div>
+			</div>
+		</div>
+		
+		
+		<script type="text/javascript" src="js/jquery-1.11.3.min.js" ></script>
+		<script type="text/javascript" src="js/serverURL.js" ></script>
+		<script type="text/javascript" src="plugins/jquery.pagination.js" ></script>
+		<script type="text/javascript" src="js/dateFormat.js" ></script>
+		<script type="text/javascript" src="js/jquery.cookie.js" ></script>
+		
+		<script type="text/javascript">
+			var rows = $(".pagination_num select option:selected").val();  //每页显示数量
+			console.log(rows);
+			var currPage;
+			var initFlag=true; 
+			$(function() {
+				PageCallback(0,null); 
+				if($.cookie("roleId") == "管理员"){
+					$(".table_add").hide();
+				}
+			});
+			$(".pagination_num select").change(function(){
+				initFlag=true;
+				rows = $(".pagination_num select option:selected").val();
+				PageCallback(0,null); 
+			});
+			//分页查询start
+			function PageCallback(currPage,jq){
+				$.ajax({
+					type:"POST",
+					url:serverPath+'/wks/shebao/list',
+					headers:{token:localStorage.getItem("token")},
+					data:{"currPage":currPage+1,"currNum":rows,"keywords":$("#keyWord").val()},
+					dataType:"JSON",
+					success:function(result){
+						console.log(result);
+						if(result.success){
+							if(initFlag){
+								$("#pagePlugins").pagination(result.total,{
+									items_per_page:rows,
+									num_edge_entries:1,
+									num_display_entries:2,
+									callback:PageCallback
+								});
+								initFlag=false;
+							}
+							$(".jilu").text(result.total);
+							$("#tableBox").empty();
+							loadDataList(result.data,result.total);
+						}else{
+							alert(result.msg);
+						}
+					}
+				}); 
+			} 
+			//分页查询end
+			//表格载入数据start
+			function loadDataList(listData,total){
+				var tableTh = `<tr>
+								<th></th>
+								<th>序号</th>
+								<th>所在社保账户</th>
+								<th>姓名</th>
+								<th>身份证号</th>
+								<th>员工编号</th>
+								<th>单位公积金</th>
+								<th>个人公积金</th>
+								<th>单位缴费合计</th>
+								<th>个人缴费合计</th>
+								<th>总计</th>
+								<th>参保基数</th>
+								<th>导入日期</th>
+							</tr>`;
+				$("#tableBox").append(tableTh);
+			 	var	html="";
+			 	for(var i=0;i<listData.length;i++){
+			 		var datas=listData[i];
+			 		//console.log(datas);
+			 		if(datas.SHEBAO_MONTH){
+						//console.log(datas.SHEBAO_MONTH);
+						datas.SHEBAO_MONTH = new Date(datas.SHEBAO_MONTH).format("yyyy-MM-dd");
+						//console.log(datas.SHEBAO_MONTH);
+					}
+			 		html += `<tr>
+			 					<td><input class="del" type="checkbox" name="kaoqingId" value="${datas.SHEBAO_ID}"/></td>
+								<td>${i+1}</td>
+								<td>${datas.SHEBAO_BODY || ''}</td>
+								<td>${datas.NAME || ''}</td>
+								<td>${datas.IDCARD || ''}</td>
+								<td>${datas.EMP_NUM || ''}</td>
+								<td>${datas.DW_GONGJJ_HJ || ''}</td>
+								<td>${datas.GR_GONGJJ_HJ || ''}</td>
+								<td>${datas.DANWEI_JF || ''}</td>
+								<td>${datas.GEREN_JF || ''}</td>
+								<td>${datas.SHEBAO_ZJ || ''}</td>
+								<td>${datas.SHEBAO_JS || ''}</td>
+								<td>${datas.SHEBAO_MONTH || ''}</td>
+							</tr>`;
+		 		}
+		 		$("#tableBox").append(html); 
+			}
+			//表格载入数据end
+			
+			//搜索功能
+			function Search(){
+				initFlag=true;
+				PageCallback(0);
+			}
+			
+			// 导入数据		
+			function uploadData(_target){
+				var formData = new FormData($("#uploadDataForm")[0]); 
+				var file = $('#uploadDataInput')[0].files[0];
+				console.log(file);
+				if(!file){
+	                 alert("请选择文件");
+	                 return false;
+	             }else if (file.name.indexOf('.xlsx') < 0) {
+					alert('请选择Excel文件');
+					return;
+				}
+				$.ajax({  
+					url:serverPath + '/wks/shebao/readSheBaoExcel',
+					headers:{token:localStorage.getItem("token")},
+					type: 'POST',  
+					data: formData,  
+					async: true,  
+					cache: false,  
+					contentType: false,  
+					processData: false,  
+					beforeSend:function(){
+						$("#loading").show();
+					},
+					success: function (returndata) {  
+						//console.log(returndata);
+						alert(returndata.msg); 
+						window.location.reload();
+					},  
+					error: function (returndata) {  
+						alert('系统网络异常！');
+					}  
+				}); 
+			}
+			
+			//批量删除数据
+			function delAll(){
+				if(!confirm("是否确认删除?")){
+					return null;
+				}
+				var delDatas = [];
+				$(".del:checked").each(function(){
+					delDatas.push($(this).val());
+				})
+				//console.log(delDatas);
+				
+				$.ajax({
+					type:"post",
+					url:serverPath + "/wks/shebao/deleteMany",
+					headers:{token:localStorage.getItem("token")},
+					dataType : "json",
+					data:{"SHEBAO_IDS":delDatas},
+					traditional:true,  //变成数组
+					success: function(result){
+						if(result.success){
+							alert(result.msg);
+							window.location.reload();   
+						}else{
+							alert(result.msg);
+						}
+					},
+					error : function(){
+						alert("系统网络异常！");
+					}
+				});
+			}
+		</script>
+	</body>
+</html>

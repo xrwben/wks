@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>美丽人才劳务派遣人力资源管理系统——首页</title>
+		<link rel="Shortcut Icon" href="images/favicon.png"  />
+		<link rel="stylesheet" href="css/common.css" />
+		<link rel="stylesheet" href="css/index.css" />
+		<style>
+			.panel_content ul li > a{color: #eee;}
+		</style>
+	</head>
+	<body>
+		<div id="header">
+			<div class="header_logo">
+				美丽人才劳务派遣人力资源管理系统
+			</div>
+			<div class="logOut">
+				<div class="log_info clearfix">
+					<img src="images/login_logo.png"/>
+					<a href="javascript:void(0)"><span class="userName"></span>(<span class="roleId"></span>）<i></i></a>
+				</div>
+				<div class="log_select">
+					<p>
+						<a href="modifyPassword.html" target="show_pages">修改密码</a>
+					</p>
+					<p>
+						<a href="login.html" onclick="logOff()">退出登陆</a>
+					</p>
+				</div>
+			</div>
+		</div>
+		<!--
+        	作者：offline
+        	时间：2017-03-27
+        	描述：左侧导航面板
+        -->
+        <div id="mainCon">
+			<div id="siderPanel">
+				<div class="panel_logo">
+					<div class="pic_name clearfix">
+						<div class="pic">
+							<img src="images/login_logo.png" />
+						</div>
+						<div class="infomation">
+							<p class="userName"></p>
+							<p class="roleId"></p>
+						</div>
+					</div>
+				</div>
+				<div class="panel_content">
+					<ul>
+						<li class="curr">
+							<a href="adm_main.html" target="show_pages">首页</a>
+						</li>
+						<li> 
+							系统管理<span></span>
+							<div class="list">
+								<p><a href="adm_accountManagement.html" target="show_pages">账户管理</a></p>
+								<p><a href="adm_departmentPositionManagement.html" target="show_pages">部门岗位管理</a></p>
+								<p><a href="adm_postDataManagement.html" target="show_pages">岗位资料管理</a></p>
+								<p><a href="adm_ logManagement.html" target="show_pages">日志管理</a></p>
+							</div>
+						</li>
+						<li> 
+							新增内容管理<span></span>
+							<div class="list">
+								<p><a href="adm_citysManagement.html" target="show_pages">城市管理</a></p>
+								<p><a href="adm_companyManagement.html" target="show_pages">公司管理</a></p>
+								<p><a href="adm_postTypeManagement.html" target="show_pages">岗位类型管理</a></p>
+								<p><a href="adm_zhijiManagement.html" target="show_pages">职级管理</a></p>
+								<!--<p><a href="adm_serviceTypeManagement.html" target="show_pages">服务类别管理</a></p>-->
+							</div>
+						</li>
+						<li> 
+							<a href="adm_employeeInformation.html" target="show_pages">员工管理</a>
+						</li>
+						<li> 
+							<a href="monthlySocialSecurityManagement.html" target="show_pages">社保管理</a>
+						</li>
+						<li> 
+							<a href="monthlyAttendanceSheetManagement.html" target="show_pages">考勤管理</a>
+						</li>
+						<li> 
+							服务费管理<span></span>
+							<div class="list">
+								<p><a href="serviceFeeCollectList.html" target="show_pages">服务费收取名单</a></p>
+								<p><a href="serviceFeeSummary.html" target="show_pages">服务费汇总</a></p>
+							</div>
+						</li>
+						<li> 
+							设置<span></span>
+							<div class="list">
+								<p><a href="adm_templateManager.html" target="show_pages">模板设置</a></p>
+								<p><a href="adm_setMailBox.html" target="show_pages">发送邮箱设置</a></p>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div id="showCon">
+				<iframe name="show_pages" src="adm_main.html" height="100%" width="100%" frameborder="0"></iframe>
+			</div>
+		</div>
+		
+		
+		<script type="text/javascript" src="js/jquery-1.11.3.min.js" ></script>
+		<script type="text/javascript" src="js/jquery.cookie.js" ></script>
+		<script type="text/javascript" src="js/index.js" ></script>
+		<script type="text/javascript">
+			mainCon.style.height = document.body.clientHeight - 65 +"px";
+			window.onresize = function(){
+				var mainCon = document.getElementById("mainCon");
+				mainCon.style.height = document.body.clientHeight - 65 +"px";
+			}
+		</script>
+		
+	</body>
+</html>

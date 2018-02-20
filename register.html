@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="Access-Control-Allow-Origin" content="*">
+		<title>注册</title>
+		<script type="text/javascript" src="js/jquery-1.11.3.min.js" ></script>
+	</head>
+	<body>
+		<div class="regist">
+			<form id="myForm">
+				<p>
+					<b>*用户名：</b>
+					<input class="" type="text" name="USERNAME" placeholder="请输入用户名"/>
+				</p>
+				<p>
+					<b>*密码：</b>
+					<input class="" type="password" name="PASSWORD" placeholder="请输入密码"/>
+				</p>
+				<p>
+					<b>*确认密码：</b>
+					<input class=""type="password" placeholder="请确认密码"/>
+				</p>
+				<p>
+					<b>*姓名：</b>
+					<input class=""type="text" name="NAME" placeholder="请输入密码"/>
+				</p>
+				<p>
+					<b>*角色：</b>
+					<select name="">
+						<option vule="1">管理员</option>
+						<option vule="2">管理员</option>
+						<option vule="3">管理员</option>
+						<option vule="4">管理员</option>
+					</select>
+				</p>
+				<p>
+					<b>手机：</b>
+					<input class="" type="text" name="PHONE" placeholder="请输入密码"/>
+				</p>
+				<p>
+					<b>邮箱：</b>
+					<input class="" type="text" name="EMAIL" placeholder="请输入密码"/>
+				</p>
+				<p>
+					<input id="tj" type="button" value="登&emsp;陆"/>
+				</p>
+				<p class="text"></p>
+			</form>
+		</div>
+		
+		<script type="text/javascript">
+			$(function(){
+				
+				$("#tj").click(function(){
+					
+					$.ajax({
+						type:"post",
+						url:"http://192.168.1.140:8080/wks/user/save",
+						async:true,
+						data: $("#myForm").serializeArray(),
+						dateType : "jsonp",
+						success : function(data){
+							$("regist").append("1111111");
+							console.log("111"+data.msg);
+							if(data.success){
+								alert("注册车成功！");
+							}
+						},
+						error : function(data){
+							console.log("fanhuicuowu:"+data.responseText);
+						}
+					});
+					//return false;
+				})
+				
+			})
+		</script>
+	</body>
+</html>

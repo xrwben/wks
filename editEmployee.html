@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="Access-Control-Allow-Origin" content="*">
+		<title>员工信息</title>
+		<link rel="stylesheet" href="css/common.css" />
+		<link rel="stylesheet" href="css/newEmployee.css" />
+		<style>
+			
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<div class="header clearfix">
+				<div class="h_nav">
+					<h2>员工详情信息</h2>
+					<p><span>首页</span>/<span>员工管理</span>/<span>员工信息</span>/<span>员工详细信息</span></p>
+				</div>
+				<div class="h_btn">
+					<button id="zc" class="" onclick="confirmModification()">确定修改</button>
+				</div>
+			</div>
+			<div class="main">
+				<ul class="nav clearfix">
+					<li class="hover">基本信息</li>
+				</ul>
+				<form id="myForm">
+					<div class="nav_con">
+						<!--基本信息-->
+						<div class="tab con_baseInfo">
+							<input type="text" class="templet NAME showname" value="" readonly style="border:0;font-size: 24px;font-weight: bold;" />
+						
+							<!--基本信息-->
+							<div class="part part2">
+									<h3>
+										<i style="font-family:'Arial-BoldMT', 'Arial Bold', 'Arial';color:#00CC99;">▼</i>基本信息
+										<img src="images/bianji.png"><span>编辑</span>
+									</h3>
+									<div class="part_con">
+											<p>
+												<label><em>*</em>姓名：</label>
+												<input type="text" class="templet NAME bjName" name="NAME" value="" onblur="showName()"/>
+											</p>
+											<p>
+												<label>英文名（曾用名）：</label>
+												<input type="text" class="templet ENGLISH_NAME" name="ENGLISH_NAME" />
+											</p>
+											<p class="sex">
+												<label><em>*</em>性别：</label>
+												<select class="templet SEX" name="SEX">
+													<option value="男">男</option>
+													<option value="女">女</option>
+												</select>
+											</p>
+											<p>
+												<label><em>*</em>证件号码（身份证）：</label>
+												<input type="text" class="templet IDCARD" name="IDCARD" />
+											</p>
+											<p>
+												<label><em>*</em>手机号码：</label>
+												<input type="text" class="templet PHONE" name="PHONE" />
+											</p>
+											<p>
+												<label>QQ号：</label>
+												<input type="text" class="templet QQ" name="QQ" />
+											</p>
+											<p>
+												<label>微信号：</label>
+												<input type="text" class="templet WEIXIN" name="WEIXIN" />
+											</p>
+											<p>
+												<label><em>*</em>邮箱：</label>
+												<input type="text" class="templet EMAIL" name="EMAIL" />
+											</p>
+											<p>
+												<label><em>*</em>通讯地址(身份证)：</label>
+												<input type="text" class="templet ADDRESS" name="ADDRESS" />
+											</p>
+											<p>
+												<label><em>*</em>开户行：</label>
+												<input type="text" class="templet BANK_TYPE" name="BANK_TYPE" />
+											</p>
+											<p>
+												<label><em>*</em>支行：</label>
+												<input type="text" class="templet BANK_CITY" name="BANK_CITY" />
+											</p>
+											<p>
+												<label><em>*</em>银行卡号：</label>
+												<input type="text" class="templet BANK_ACCOUNT" name="BANK_ACCOUNT" />
+											</p>
+											<p>
+												<label><em>*</em>现居住地：</label>
+												<input type="text" class="templet HOME" name="HOME" required/>
+											</p>
+											<p>
+												<label><em>*</em>紧急联系人：</label>
+												<input type="text" class="templet EMERGENCY_MAN" name="EMERGENCY_MAN" />
+											</p>
+											<p>
+												<label><em>*</em>联系人手机号码：</label>
+												<input type="text" class="templet EMERGENCY_PHONE" name="EMERGENCY_PHONE" />
+											</p>
+										
+									</div>
+								</div>
+						</div>
+					</div>
+				</form>
+			</div>
+			
+		</div>
+
+		<script type="text/javascript" src="js/jquery-1.11.3.min.js" ></script>
+		<script type="text/javascript" src="js/serverURL.js" ></script>
+		<script type="text/javascript" src="js/jquery.validate.min.js" ></script>
+		<script type="text/javascript" src="js/messages_zh.js" ></script>
+		<script type="text/javascript" src="js/tab.js" ></script>
+		<script type="text/javascript" src="js/dateFormat.js" ></script>
+		<script type="text/javascript" src="js/pdfFormValidate.js" ></script>
+		<script type="text/javascript">
+			var resultData = null;
+			console.log(resultData);
+			$(function(){
+				var _url = window.location.href; //拿到地址
+				var parameter = _url.split("=")[1]; //分割字符创变成数组取得传过来的id
+				$.ajax({
+					type : "post",
+					url :　serverPath+"/wks/employee/findById",
+					headers:{token:localStorage.getItem("token")},
+					data : {"EMPLOYEE_ID":parameter},
+					dataType:"JSON",
+					success : function(result){
+						//var result = JSON.parse(result);
+						resultData = result;
+						console.log(resultData);
+						console.log(resultData.data);
+						if(result.success == "token"){
+							alert(result.msg);
+							window.parent.window.location.href = "login.html";
+						}else if(result.success){
+							if(result.data.TOWORK_TIME && result.data.OUTWORK_TIME){
+								console.log(result.data.TOWORK_TIME);
+								result.data.TOWORK_TIME = new Date(result.data.TOWORK_TIME).format("yyyy-MM-dd");
+								result.data.OUTWORK_TIME = new Date(result.data.OUTWORK_TIME).format("yyyy-MM-dd");
+								console.log(result.data.TOWORK_TIME);
+							}
+							
+							//判断pdf是否生成
+							if(result.data.PDF_SERVICE_URL){
+								$(".makePDF").addClass("_color").text("已生成PDF").removeAttr("onclick");
+							}
+							
+							for(var prop in result.data){
+								var txt = $("."+prop).val(result.data[prop]);
+							}
+						}else{
+							alert(result.msg);
+						}
+					},
+					error : function(){
+						console.log("系统网络异常！");
+					}
+				})	
+			});
+			
+			
+			//确认修改基本信息
+			function confirmModification(){
+				if(validFormPdf().form()) {
+			        //通过表单验证，以下编写自己的代码
+			        var form = $("#myForm")[0];
+					console.log(form);
+					var fd = new FormData(form);
+					fd.append("EMPLOYEE_ID",resultData.data.EMPLOYEE_ID);
+					console.log(fd);
+					$.ajax({
+						type:"post",
+						url:serverPath +"/wks/employee/adminEdit",
+						headers:{token:localStorage.getItem("token")},
+						data : fd ,
+						dataType : "json",
+						cache : false,
+						contentType :　false,
+						processData: false,
+						beforeSend:function(){
+							$("#loading").show();
+						},
+						success : function(result){
+							console.log(result);
+							if(result.success == "token"){
+								alert(result.msg);
+								window.parent.window.location.href = "login.html";
+							}else if(result.success){
+								alert(result.msg);
+								window.location.href = "adm_employeeInformation.html"; 
+							}else{
+								alert(result.msg);
+							}
+						},
+						complete: function () {  
+					       
+					    }, 
+						error:function(){
+							alert("系统网络异常!");
+						}
+					});
+			    } else {
+			    	alert("请完善员工信息！")
+			        //校验不通过，什么都不用做，校验信息已经正常显示在表单上
+			    }
+			}
+		</script>
+	</body>
+</html>

@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>账户管理</title>
+		<link rel="stylesheet" href="css/common.css" />
+		<link rel="stylesheet" href="css/table.css" />
+		<link rel="stylesheet" href="css/shadeModal.css" />
+		<style>
+			.table_con table tr th:last-child{width:180px;}
+			.modal_xz{width:50%;height:70%;}
+			.modal_xz em{color:red;padding-right:2px;font-style: normal;}
+			span.error{color:red;font-size: 12px;display: block;margin-left:85px;}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<div class="header clearfix">
+				<div class="h_nav">
+					<h2>账户管理</h2>
+					<p><span>首页</span>/<span>系统管理</span>/<span>账户管理</span></p>
+				</div>
+			</div>
+			<div class="main">
+				<div class="main_con zhgl">
+					<div class="table_pagination zhgl_pagination">
+						<div class="pagePlugins" id="pagePlugins"></div>
+						<div class="pagination_num">共<span class="jilu"></span>条记录，每页
+							<select name="currNum">
+								<option value="5">5</option>
+								<option value="10">10</option>
+								<option value="20">20</option>
+							</select>
+							条记录
+						</div>
+					</div>
+					<div class="table_con zhgl_table">
+						<table id="tableBox" cellspacing="1" cellpadding="0" style="table-layout: fixed;">
+						
+						</table>
+					</div>
+					<div class="table_add zhgl_add">
+						<a href="javascript:void(0)" class="xz" onclick="xzModal()">新增</a>
+						<!--<a href="javascript:void(0)" class="ty" onclick="deleteUser()">删除</a>-->
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		
+		<div class="shade shade_xz">
+			<!--注册弹窗-->
+			<div class="modal modal_xz">
+				<div class="regist">
+					<form id="register">
+						<h2>新增用户</h2>
+						<p class="hasUser">
+							<b><em>*</em>用户名：</b>
+							<input type="text"　id="USERNAME" name="USERNAME" placeholder="请输入用户名"/>
+						</p>
+						<p>
+							<b><em>*</em>密码：</b>
+							<input id="pass" type="password" name="PASSWORD" placeholder="请输入密码" />
+						</p>
+						<p>
+							<b><em>*</em>确认密码：</b>
+							<input id="PASSWORD_CONFIRM" type="password" name="PASSWORD_CONFIRM" placeholder="确认密码"/>
+						</p>
+						<p>
+							<b><em>*</em>姓名：</b>
+							<input type="text" name="NAME" placeholder="请输入真实姓名" />
+						</p>
+						<p>
+							<b><em>*</em>角色：</b>
+							<select name="ROLE_ID">
+								<option value="">--请选择--</option>
+								<option vule="服务经理">服务经理</option>
+								<option vule="人事专员">人事专员</option>
+								<option vule="财务专员">财务专员</option>
+							</select>
+						</p>
+						<p>
+							<b>手机：</b>
+							<input type="text" name="PHONE" placeholder="请输入常用手机号码"/>
+						</p>
+						<p>
+							<b>邮箱：</b>
+							<input type="email" name="EMAIL" placeholder="请输入邮箱" />
+						</p>
+						<p>
+							<input id="qd" type="button" value="注&emsp;册" onclick="Register()"/>
+							<input id="qx" type="button" value="关&emsp;闭" onclick="closeModal()"/>
+						</p>
+					</form>
+				</div>
+			</div>
+		</div>
+		
+		<!--编辑弹窗-->
+		<div class="shade shade_bj">
+			<div class="modal modal_bj">
+				<div class="editUser">
+					<form id="editUser">
+						<h2>修改用户</h2>
+						<p class="hasUser">
+							<b><em></em>用户名：</b>
+							<input type="text"　id="USERNAME" class="USERNAME" name="USERNAME" readonly />
+						</p>
+						<p>
+							<b><em></em>姓名：</b>
+							<input type="text" class="NAME" name="NAME" placeholder="请输入真实姓名" />
+						</p>
+						<p>
+							<b>手机：</b>
+							<input type="text" class="PHONE" name="PHONE" placeholder="请输入常用手机号码"/>
+						</p>
+						<p>
+							<b>邮箱：</b>
+							<input type="email" class="EMAIL" name="EMAIL" placeholder="请输入邮箱" />
+						</p>
+						<p>
+							<input id="qd" type="button" value="修&emsp;改" onclick="editUser()"/>
+							<input id="qx" type="button" value="关&emsp;闭" onclick="closeModal()"/>
+						</p>
+					</form>
+				</div>
+			</div>
+		</div>
+		
+		
+		<script type="text/javascript" src="js/jquery-1.11.3.min.js" ></script>
+		<script type="text/javascript" src="js/serverURL.js" ></script>
+		<script type="text/javascript" src="plugins/jquery.pagination.js" ></script>
+		<script type="text/javascript" src="js/dateFormat.js" ></script>
+		<script type="text/javascript" src="js/jquery.validate.min.js" ></script>
+		<script type="text/javascript" src="js/messages_zh.js" ></script>
+		<script type="text/javascript">
+			$(function(){
+				//页面加载完成调用接口
+				PageCallback(0,null); 
+				validFormRegister();
+				validFormEditUser();
+			});
+			function validFormRegister(){
+				return $("#register").validate({
+					errorElement: "span", 
+				    rules: {
+				      USERNAME: {
+				        required: true,
+				        abc : true,
+				        minlength: 2,
+				        remote: {
+		                    type: "post",
+		                    url: serverPath+"/wks/user/hasUser",
+		                    headers:{token:localStorage.getItem("token")},
+		                    data: {
+		                        username: function() {
+		                            return $("#USERNAME").val();
+		                        }
+		                    },
+		                    dataFilter: function(data, type) {
+		                    	console.log(JSON.parse(data).data); //转换成对象
+		                        if (JSON.parse(data).data){
+		                            return true;
+		                        }else{
+		                            return false;
+		                        }
+		                    }
+		                }
+				      },
+				      PASSWORD: {
+				        required: true,
+				        minlength: 6
+				      },
+				      PASSWORD_CONFIRM: {
+				        required: true,
+				        equalTo: "#pass"
+				      },
+				      NAME:{
+				      	required: true
+				      },
+				      ROLE_ID: {
+				        required: true
+				      },
+				      PHONE: {
+				      	phone: true
+				      },
+				      EMAIL: {
+				      	email : true
+				      }
+				    },
+				    messages: {
+				      USERNAME: {
+				        required: "请输入用户名",
+				        minlength: "用户名必需由两个以上字符组成",
+				        abc: "用户名只能为大小写字母",
+				        remote : "用户名已存在,请重新输入"
+				      },
+				      PASSWORD: {
+				        required: "请输入密码",
+				        minlength: "密码长度不能小于 6 位"
+				      },
+				      PASSWORD_CONFIRM: {
+				        required: "请确认密码",
+				        equalTo: "两次密码输入不一致"
+				      },
+				      NAME:"请输入姓名",
+				      ROLE_ID : "请选择一个角色",
+				      PHONE : "请输入正确的手机号",
+				      EMAIL: "请输入一个正确的邮箱地址"
+				    }
+				});
+			}
+			function validFormEditUser(){
+				return $("#editUser").validate({
+					errorElement: "span", 
+				    rules: {
+				      NAME:{
+				      	required: true
+				      },
+				      PHONE: {
+				      	phone: true
+				      },
+				      EMAIL: {
+				      	email : true
+				      }
+				    },
+				    messages: {
+				      NAME:"请输入姓名",
+				      PHONE : "请输入正确的手机号",
+				      EMAIL: "请输入一个正确的邮箱地址"
+				    }
+				});
+			}
+			// 手机号码验证
+			jQuery.validator.addMethod("phone", function(value, element) {
+				var length = value.length;
+				var mobile = /^(13[0-9]{9})|(18[0-9]{9})|(14[0-9]{9})|(17[0-9]{9})|(15[0-9]{9})$/;
+				return this.optional(element) || (length == 11 && mobile.test(value));
+			}, "请正确填写您的手机号码");
+			//用户名验证
+			jQuery.validator.addMethod("abc", function(value, element){
+				return this.optional(element) ||/^[a-zA-Z]+$/.test(value);
+			}, "只能输入字母");
+			
+			//页面加载完成table分页
+			
+			var rows = $(".pagination_num select option:selected").val();  //每页显示数量
+			var currPage;  //当前页
+			var initFlag=true;  //标记
+			var _url = serverPath+'/wks/user/list';
+			var _data = {"currPage":currPage+1,"currNum":rows};	
+			$(".pagination_num select").change(function(){
+				initFlag=true;
+				rows = $(".pagination_num select option:selected").val();
+				PageCallback(0,null); 
+			});
+			//分页查询start
+			function PageCallback(currPage,jq){
+				_data.currPage = currPage + 1,
+				_data.currNum = rows,
+				$.ajax({
+					type:"POST",
+					url: _url,
+					headers:{token:localStorage.getItem("token")},
+					data: _data,
+					dataType:"JSON",
+					success:function(result){
+						console.log(result);
+						if(result.success == "token"){
+							alert(result.msg);
+							window.parent.window.location.href = "login.html";
+						}else if(result.success){
+							if(initFlag){
+								$("#pagePlugins").pagination(result.total,{
+									items_per_page:rows,
+									num_edge_entries:1,
+									num_display_entries:2,
+									callback:PageCallback
+								});
+								initFlag=false;
+							};
+							$(".jilu").text(result.total);
+							$("#tableBox").empty();
+							loadDataList(result.data,result.total);
+						}else{
+							alert(result.msg);
+						}
+					}
+				}); 
+			} 
+			//分页查询end
+			//表格载入数据start
+			function loadDataList(listData,total){
+				var tableTh = `<tr>
+								<th>序号</th>
+								<th>姓名</th>
+								<th>账号</th>
+								<th>角色</th>
+								<th>电话</th>
+								<th>邮箱</th>
+								<th>注册时间</th>
+								<th></th>
+							</tr>`;
+				$("#tableBox").append(tableTh);
+			 	var	html="";
+			 	for(var i=0;i<listData.length;i++){
+			 		var datas=listData[i];
+			 		//请求数据成功后做判断
+			 		switch(datas.STATUS){
+			 			case "正常":
+			 				var zt = `
+									<a href="javascript:void(0)" onclick="xgModal(${datas.USER_ID})">编辑</a>
+									<a href="javascript:void(0)" onclick="forbidModal(${datas.USER_ID})">停用</a>
+									<a class="gray" href="javascript:void(0)">恢复</a>
+									<a href="resetPassword.html?USER_ID=${datas.USER_ID}">重置</a>
+								`;
+								break;
+			 			case "禁用":
+			 				var zt = `
+									<a href="javascript:void(0)" onclick="xgModal(${datas.USER_ID})">编辑</a>
+									<a class="gray" href="javascript:void(0)">停用</a>
+									<a href="javascript:void(0)" onclick="recoverModal(${datas.USER_ID})">恢复</a>
+									<a class="gray" href="javascript:void(0)">重置</a>
+								`;
+								break;
+			 		};
+			 		if(datas.ROLE_ID == "管理员"){
+			 			var zt = `
+			 				<a href="javascript:void(0)" onclick="xgModal(${datas.USER_ID})">编辑</a>
+			 			`;
+			 		}
+			 		if(datas.CTIME){
+						datas.CTIME = new Date(datas.CTIME).format("yyyy-MM-dd");
+					}
+			 		html += `<tr>
+								<td>${i+1}</td>
+								<td>${datas.NAME || ''}</td>
+								<td>${datas.USERNAME || ''}</td>
+								<td>${datas.ROLE_ID || ''}</td>
+								<td>${datas.PHONE || ''}</td>
+								<td>${datas.EMAIL || ''}</td>
+								<td>${datas.CTIME || ''}</td>
+								<td class="bj_ck">
+									${zt}
+								</td>
+							</tr>`;
+		 		}
+		 		$("#tableBox").append(html); 
+			}
+			//表格载入数据end
+	
+			//点击新增弹框
+			function xzModal(){
+				$(".shade_xz").fadeIn();
+			}
+			//点击编辑弹框
+			var resultData = null;
+			function xgModal(userId){
+				$(".shade_bj").fadeIn();
+				$.ajax({
+					type:"post",
+					url:serverPath+'/wks/user/findById',
+					headers:{token:localStorage.getItem("token")},
+					data:{"USER_ID":userId},
+					dataType:"json",
+					success:function(result){
+						resultData = result;
+						console.log(result);
+						if(result.success == "token"){
+							alert(result.msg);
+							window.parent.window.location.href = "login.html";
+						}else if(result.success){
+							for(var prop in result.data){
+								var txt = $("."+prop).val(result.data[prop]);
+							}
+						}else{
+							alert(result.msg);
+						}
+					},
+					error:function(){
+						alert("系统网络异常！");
+					}
+				});
+			}
+			//点击编辑修改确定
+			function editUser(){
+				console.log(resultData.data.USER_ID);
+				var fd = new FormData($("#editUser")[0]);
+				console.log(fd);
+				fd.append("USER_ID",resultData.data.USER_ID);
+				console.log(fd);
+				if(validFormEditUser().form()){
+					$.ajax({
+						type:"post",
+						url:serverPath+'/wks/user/edit',
+						headers:{token:localStorage.getItem("token")},
+						data:fd,
+						dataType:"json",
+						cache: false,  
+				        contentType: false,  
+				        processData: false,
+						success:function(result){
+							console.log(result);
+							if(result.success == "token"){
+								alert(result.msg);
+								window.parent.window.location.href = "login.html";
+							}else if(result.success){
+								alert(result.msg);
+								closeModal();
+							}else{
+								alert(result.msg);
+							}
+						},
+						error:function(){
+							alert("系统网络异常！");
+						}
+					})
+				}
+			}
+			//禁用账号
+			function forbidModal(userId){
+				$.ajax({
+					type:"post",
+					url:serverPath+'/wks/user/disable',
+					headers:{token:localStorage.getItem("token")},
+					data:{"USER_ID":userId},
+					dataType:"json",
+					success:function(result){
+						resultData = result;
+						console.log(result);
+						if(result.success == "token"){
+							alert(result.msg);
+							window.parent.window.location.href = "login.html";
+						}else if(result.success){
+							alert(result.msg);
+							window.location.reload();
+						}else{
+							alert(result.msg);
+						}
+					},
+					error:function(){
+						alert("系统网络异常！");
+					}
+				});
+			}
+			//恢复账号
+			function recoverModal(userId){
+				$.ajax({
+					type:"post",
+					url:serverPath+'/wks/user/enable',
+					headers:{token:localStorage.getItem("token")},
+					data:{"USER_ID":userId},
+					dataType:"json",
+					success:function(result){
+						resultData = result;
+						console.log(result);
+						if(result.success == "token"){
+							alert(result.msg);
+							window.parent.window.location.href = "login.html";
+						}else if(result.success){
+							alert(result.msg);
+							window.location.reload();
+						}else{
+							alert(result.msg);
+						}
+					},
+					error:function(){
+						alert("系统网络异常！");
+					}
+				});
+			}
+			
+			//点击确定 注册函数Register()
+			function Register(){
+				if(validFormRegister().form()) {
+					$.ajax({
+						type:"post",
+						url:serverPath + "/wks/user/save",
+						headers:{token:localStorage.getItem("token")},
+						data:$("#register").serialize(),
+						success: function(result){
+							if(result.success == "token"){
+								alert(result.msg);
+								window.parent.window.location.href = "login.html";
+							}else if(result.success){
+								alert(result.msg);
+								closeModal();
+							}else{
+								alert(result.msg);
+							}
+						},
+						error:function(){
+							alert("系统网络异常！");
+						}
+					})
+				}
+			}
+			
+			//点击关闭隐藏弹框
+			function closeModal(){
+				$(".shade").fadeOut();
+				window.location.reload();
+				//$("#register")[0].reset();  //$("#register").reset(); 无效
+				
+			}
+			window.onresize = function(){
+				$(".shade").css({
+					"height" : window.screen.availHeight + "px"
+				});
+			}
+			
+		</script>
+	</body>
+</html>

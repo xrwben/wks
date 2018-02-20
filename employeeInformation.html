@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>员工信息</title>
+		<link rel="stylesheet" href="css/common.css" />
+		<link rel="stylesheet" href="css/table.css" />
+		<link rel="stylesheet" href="css/shadeModal.css" />
+		<style type="text/css">
+			#loading{width:100%;height:100%;background:rgba(0,0,0,0.5);position: fixed;display: none;}
+			#loading img{position: absolute;left: 0;top:0;right:0;bottom: 0;margin: auto;}
+		</style>
+	</head>
+	<body>
+		<!--导入数据友情提示-->
+		<div id="loading">
+			<img src="images/loading.gif"/>
+		</div>
+		<div class="container">
+			<div class="header clearfix">
+				<div class="h_nav">
+					<h2>员工信息</h2>
+					<p><span>首页</span>/<span>员工管理</span>/<span>员工信息</span></p>
+				</div>
+			</div>
+			<div class="main">
+				<div class="main_con ygxx">
+					<div class="table_pagination ygxx_pagination">
+						<div id="pagePlugins" class="pagePlugins"></div>
+						<div class="pagination_num">共<span class="jilu"></span>条记录，每页
+							<select name="currNum">
+								<option value="5">5</option>
+								<option value="10">10</option>
+								<option value="15">15</option>
+								<option value="20">20</option>
+								<option value="50">50</option>
+							</select>
+							条记录
+						</div>
+						<div class="pagination_seach">
+							<input type="text" id="keyWord" name="keywords" value="" placeholder="输入员工编号／姓名／身份证号"/>
+							<button class="pagination_seach_btn" onclick="Search()"></button>
+						</div>
+						<button class="sx" onclick="showModal()">筛&nbsp;选</button>
+					</div>
+					<div class="table_con" style="overflow-x: auto;">
+						<table id="tableBox" cellspacing="1" cellpadding="0"  style="width: 180%;">
+							
+						</table>
+					</div>
+					<div class="table_add">
+						<!--<form id="uploadDataForm">
+							导入员工：
+							<input id="uploadDataInput" type="file" name="file" value="" accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
+							<input type="button" value="导入数据" onclick="uploadData()"/>
+						</form>-->
+						<a class="xjyg" href="newEmployee.html">员工入职</a>
+						<a id="downExcel" class="" href="javascript:void(0)">导出员工</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="shade shade_sx">
+			<!--注册弹窗-->
+			<div class="modal modal_sx">
+				<div class="">
+					<form id="xs_empInfo">
+						<h2>筛选</h2>
+						<p>
+							<b>考勤城市：</b>
+							<select id="select_kqcs" class="select_kqcs" name="WORK_CITY">
+							</select>
+						</p>
+						<p>
+							<b>公司：</b>
+							<select id="select_gs" name="COMPANY">
+							</select>
+						</p>
+						<p>
+							<b>职级：</b>
+							<select id="ZHIJI"name="ZHIJI">
+							</select>
+						</p>
+						<p>
+							<b>服务类别：</b>
+							<select id="select_fwlb" name="SERVERS_TYPE">
+								<option value=" ">--请选择--</option>
+									<option value="A1类">A1类</option>
+									<option value="A类">A类</option>
+									<option value="B类">B类</option>
+									<option value="C类">C类</option>
+									<option value="兼职类">兼职类</option>
+									<option value="停薪留职类">停薪留职类</option>
+							</select>
+						</p>
+						<p>
+							<b>员工状态：</b>
+							<select id="select_ygzt" name="RUZHI_STATUS">
+								<option value=" ">--请选择--</option>
+								<option value="试用">试用</option>
+								<option value="调动">调动</option>
+								<option value="转正">转正</option>
+								<option value="离职">离职</option>
+							</select>
+						</p>
+						<p>
+							<b style="">入职起：</b>
+							<input type="date" id="START_DATE" name="START_DATE" value=""/>
+						</p>
+						<p>
+							<b style="">入职止：</b>
+							<input type="date" id="END_DATE" name="END_DATE" value=""/>
+						</p>
+						<p>
+							<input id="qx" type="button" value="取&emsp;消" onclick="closeModal()"/>
+							<input id="qd" type="button" value="确&emsp;定" onclick="qDselectInformation()"/>
+						</p>
+					</form>
+				</div>
+			</div>
+		</div>
+		
+		<script type="text/javascript" src="js/jquery-1.11.3.min.js" ></script>
+		<script type="text/javascript" src="js/jquery.cookie.js" ></script>
+		<script type="text/javascript" src="js/serverURL.js" ></script>
+		<script type="text/javascript" src="plugins/jquery.pagination.js" ></script>
+		<script type="text/javascript" src="js/dateFormat.js" ></script>
+		<script type="text/javascript" src="js/employeeInformation.js" ></script>
+		<script type="text/javascript" src="js/newEmp.js" ></script>
+		<script type="text/javascript">
+			$(function(){
+				//给数据导出生成下载接口
+				$("#downExcel").attr("href",serverPath+"/wks/employee/empExceldownload?roleId="+$.cookie("roleId")+"&name="+$.cookie("name"));
+			})
+			
+			//导入数据		
+			function uploadData(){
+				var formData = new FormData($("#uploadDataForm")[0]); 
+				var file = $('#uploadDataInput')[0].files[0];
+				console.log(file);
+				if(!file){
+	                 alert("请选择文件");
+	                 return false;
+	             }
+				$.ajax({  
+					url:serverPath + '/wks/employee/readEmpExcel',
+					headers:{token:localStorage.getItem("token")},
+					type: 'POST',  
+					data: formData,  
+					async: true,  
+					cache: false,  
+					contentType: false,  
+					processData: false,  
+					beforeSend:function(){
+						$("#loading").show();
+					},
+					success: function (returndata) {  
+						alert(returndata.msg); 
+						window.location.reload();
+					},  
+					error: function (returndata) {  
+						alert('系统网络异常！');
+					}  
+				}); 
+			}
+			
+			//筛选弹窗
+			function showModal(){
+				$(".shade").fadeIn();
+				companyListAll();
+				cityListAll();
+				zhijiListAll();
+			}
+			//关闭弹窗
+			function closeModal(){
+				$(".shade").fadeOut();
+				$("#xs_empInfo")[0].reset();
+			}
+			
+		</script>
+	</body>
+</html>

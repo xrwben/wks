@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>服务类别管理</title>
+		<link rel="stylesheet" href="css/common.css" />
+		<link rel="stylesheet" href="css/table.css" />
+		<link rel="stylesheet" href="css/shadeModal.css" />
+		<style>
+			/*.table_con table tr th:last-child{width:60px;}*/
+			.modal_xz{width:50%;height:70%;}
+			.modal_xz em{color:red;padding-right:2px;font-style: normal;}
+			span.error{color:red;font-size: 12px;display: block;margin-left:85px;}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<div class="header clearfix">
+				<div class="h_nav">
+					<h2>服务类别管理</h2>
+					<p><span>首页</span>/<span>新增内容管理</span>/<span>服务类别管理</span></p>
+				</div>
+			</div>
+			<div class="main">
+				<div class="main_con zhgl">
+					<div class="table_pagination zhgl_pagination">
+						<div class="pagePlugins" id="pagePlugins"></div>
+						<div class="pagination_num">共<span class="jilu"></span>条记录，每页
+							<select name="currNum">
+								<option value="5">5</option>
+								<option value="10">10</option>
+								<option value="20">20</option>
+							</select>
+							条记录
+						</div>
+					</div>
+					<div class="table_con zhgl_table">
+						<table id="tableBox" cellspacing="1" cellpadding="0" style="table-layout: fixed;">
+						
+						</table>
+					</div>
+					<div class="table_add zhgl_add">
+						<a href="javascript:void(0)" class="xz" onclick="xzModal()">新增</a>
+						<!--<a href="javascript:void(0)" class="ty" onclick="deleteUser()">删除</a>-->
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		
+		<div class="shade shade_xz">
+			<!--注册弹窗-->
+			<div class="modal modal_xz">
+				<div class="addCityName">
+					<form id="addCityName">
+						<h2>添加服务类别</h2>
+						<p class="">
+							<b><em>*</em>类别名称：</b>
+							<input type="text" class="cityName" name="CITY" value="" placeholder="请确保输入正确的城市名"/>
+						</p>
+						<p>
+							<input id="qd" type="button" value="添&emsp;加" onclick="addCityName()"/>
+							<input id="qx" type="button" value="取&emsp;消" onclick="closeModal()"/>
+						</p>
+					</form>
+				</div>
+			</div>
+		</div>
+
+		<script type="text/javascript" src="js/jquery-1.11.3.min.js" ></script>
+		<script type="text/javascript" src="js/serverURL.js" ></script>
+		<script type="text/javascript" src="plugins/jquery.pagination.js" ></script>
+		<script type="text/javascript" src="js/dateFormat.js" ></script>
+		<script type="text/javascript" src="js/jquery.validate.min.js" ></script>
+		<script type="text/javascript" src="js/messages_zh.js" ></script>
+		<script type="text/javascript">
+			$(function(){
+				//页面加载完成调用接口
+				PageCallback(0,null); 
+			});
+			
+			var resultData = "";
+			//页面加载完成table分页
+			var rows = $(".pagination_num select option:selected").val();  //每页显示数量
+			var currPage;  //当前页
+			var initFlag=true;  //标记
+			var _url = serverPath+'/wks/fwtype/list';
+			var _data = {"currPage":currPage+1,"currNum":rows};	
+			$(".pagination_num select").change(function(){
+				initFlag=true;
+				rows = $(".pagination_num select option:selected").val();
+				PageCallback(0,null); 
+			});
+			//分页查询start
+			function PageCallback(currPage,jq){
+				_data.currPage = currPage + 1,
+				_data.currNum = rows,
+				$.ajax({
+					type:"POST",
+					url: _url,
+					headers:{token:localStorage.getItem("token")},
+					data: _data,
+					dataType:"JSON",
+					success:function(result){
+						resultData = result;
+						console.log(result);
+						if(result.success == "token"){
+							alert(result.msg);
+							window.parent.window.location.href = "login.html";
+						}else if(result.success){
+							if(initFlag){
+								$("#pagePlugins").pagination(result.total,{
+									items_per_page:rows,
+									num_edge_entries:1,
+									num_display_entries:2,
+									callback:PageCallback
+								});
+								initFlag=false;
+							};
+							$(".jilu").text(result.total);
+							$("#tableBox").empty();
+							loadDataList(result.data,result.total);
+						}else{
+							alert(result.msg);
+						}
+					}
+				}); 
+			} 
+			//分页查询end
+			//表格载入数据start
+			function loadDataList(listData,total){
+				var tableTh = `<tr>
+								<th>序号</th>
+								<th>服务类别名称</th>
+								<th>添加时间</th>
+								<th></th>
+							</tr>`;
+				$("#tableBox").append(tableTh);
+			 	var	html="";
+			 	for(var i=0;i<listData.length;i++){
+			 		var datas=listData[i];
+			 		if(datas.CITY_CTIME){
+						datas.CITY_CTIME = new Date(datas.CITY_CTIME).format("yyyy-MM-dd");
+					}
+			 		html += `<tr>
+								<td>${i+1}</td>
+								<td>${datas.FW_TYPE || ''}</td>
+								<td>${datas.CITY_CTIME || ''}</td>
+								<td class="bj_ck">
+									<a href="javascript:void(0)" onclick="deleteROW(${datas.CITY_ID})">删除</a>
+								</td>
+							</tr>`;
+					
+		 		}
+		 		$("#tableBox").append(html); 
+			}
+			//表格载入数据end
+	
+			//点击新增弹框
+			function xzModal(){
+				$(".shade_xz").fadeIn();
+			}
+
+			//点击关闭隐藏弹框
+			function closeModal(){
+				$(".shade").fadeOut();
+				window.location.reload();
+				//$("#register")[0].reset();  //$("#register").reset(); 无效
+				
+			}
+			window.onresize = function(){
+				$(".shade").css({
+					"height" : window.screen.availHeight + "px"
+				});
+			}
+			//点击确定 添加
+			function addCityName(){
+				console.log("11");
+				console.log($(".cityName").val());
+				$.ajax({
+					type:"post",
+					url:serverPath + "/wks/fwtype/save",
+					headers:{token:localStorage.getItem("token")},
+					data:{"FW_TYPE":$(".cityName").val()},
+					success: function(result){
+						if(result.success){
+							alert(result.msg);
+							closeModal();
+						}else{
+							alert(result.msg);
+						}
+					},
+					error:function(){
+						alert("系统网络异常！");
+					}
+				})
+			}
+			
+			//删除功能
+			function deleteROW(city_id){
+				$.ajax({
+					type:"post",
+					url:serverPath + "/wks/fwtype/delete",
+					headers:{token:localStorage.getItem("token")},
+					data:{"FW_TYPE":city_id},
+					success:function(result){
+						if(result.success){
+							alert(result.msg);
+							closeModal();
+						}else{
+							alert(result.msg);
+						}
+					},
+					error:function(){
+						alert("系统网络异常！");
+					}
+				});
+			}
+		</script>
+	</body>
+</html>

@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>服务费收取名单</title>
+		<link rel="stylesheet" href="css/common.css" />
+		<link rel="stylesheet" href="css/table.css" />
+		<link rel="stylesheet" href="css/shadeModal.css" />
+		<style>
+			#loading{width:100%;height:100%;background:rgba(0,0,0,0.5);position: fixed;display: none;}
+			#loading img{position: absolute;left: 0;top:0;right:0;bottom: 0;margin: auto;}
+			.bz{margin-top: 20px;font-size: 20px;}
+			.bz span{margin-right: 100px;}
+		</style>
+	</head>
+	<body>
+		<!--导入数据友情提示-->
+		<div id="loading">
+			<img src="images/loading.gif"/>
+		</div>
+		<div class="container">
+			<div class="header clearfix">
+				<div class="h_nav">
+					<h2>服务费收取名单</h2>
+					<p><span>首页</span>/<span>服务费管理</span>/<span>服务费收取名单</span></p>
+				</div>
+			</div>
+			<div class="main">
+				<div class="main_con fwfsqmd">
+					<div class="table_pagination fwfsqmd_pagination">
+						<div id="pagePlugins" class="pagePlugins"></div>
+						<div class="pagination_num">共<span class="jilu"></span>条记录，每页
+							<select>
+								<option value="5">5</option>
+								<option value="10">10</option>
+								<option value="15">15</option>
+								<option value="20">20</option>
+							</select>
+							条记录
+						</div>
+						<div class="pagination_seach">
+							<input type="text" id="keyWord" name="keyword" value="" placeholder="请输入姓名/员工编号"/>
+							<button class="pagination_seach_btn" onclick="Search()"></button>
+						</div>
+						<button class="sx" onclick="showModal()">筛&nbsp;选</button>
+					</div>
+					<div class="table_con fwfsqmd_table" style="overflow-x: auto;">
+						<table class="" id="tableBox" cellspacing="1" cellpadding="0"  style="width: 150%;">
+						
+						</table>
+					</div>
+					<div class="bz">
+						总人数：<span id="count"></span>
+						应收总额：<span id="sum"></span>
+						<!-- 实收总额：<span>100</span> -->
+					</div>
+					<div class="table_add">
+						<form id="uploadDataForm">
+							导入数据：
+							<input id="uploadDataInput" type="file" name="file" value="" accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
+							<input type="button" value="导入数据" onclick="uploadData()"/>
+						</form>
+						<a class="" href="javascript:void(0)" onclick="createData()">生成数据</a>
+						<a class="delete" href="javascript:void(0)" onclick="delAll()">批量删除</a>
+					</div>
+					<p class="sm">
+						*说明：(1)根据当月一日在职人员数量+上月离职人员数量，和每个员工服务类型计算即可算得服务费总数。<br />
+        				&emsp;&emsp;&emsp;&emsp;(2)修改服务费类别必须在备注里面填写原因。
+					</p>
+				</div>
+			</div>
+		</div>
+		
+		
+			
+		<div class="shade shade_sx">
+			<!--注册弹窗-->
+			<div class="modal modal_sx">
+				<div class="">
+					<form id="xs">
+						<h2>筛选</h2>
+						<p>
+							<b>考勤城市：</b>
+							<input type="text" value="" id="workCity" name="workCity"/>
+						</p>
+						<p>
+							<b>职级：</b>
+							<input type="text" value="" id="zhiji" name="zhiji"/>
+						</p>
+						<p>
+							<b>服务类别：</b>
+							<input type="text" value="" id="serviceType" name="serviceType"/>
+						</p>
+						<p>
+							<input id="qx" type="button" value="取&emsp;消" onclick="closeModal();"/>
+							<input id="qd" type="button" value="确&emsp;定" onclick="qDselectInformation()"/>
+						</p>
+					</form>
+				</div>
+			</div>
+		</div>
+		
+		<script type="text/javascript" src="js/jquery-1.11.3.min.js" ></script>
+		<script type="text/javascript" src="js/serverURL.js"></script>
+		<script type="text/javascript" src="js/dateFormat.js" ></script>
+		<script type="text/javascript" src="plugins/jquery.pagination.js"></script>
+		<script type="text/javascript" src="js/jquery.cookie.js" ></script>
+		<script type="text/javascript">
+			var rows = $(".pagination_num select option:selected").val();  //每页显示数量
+			var keyword = $("#keyWord").val();  //获取搜索关键字
+			
+			var currPage;  //当前页
+			var initFlag=true;  //标记
+			var workCity = $("#workCity").val();
+			var zhiji = $("#zhiji").val();
+			var serviceType =$("#serviceType").val();//服务类别
+			var _url =serverPath + '/wks/fuwufei/list';
+			var _data = {
+				"currPage":currPage+1,
+				"currNum":rows,
+				"keyword":keyword,
+				"zhiji":zhiji,
+				"serviceType":serviceType,
+				"workCity":workCity
+			};
+			$(function() {
+				PageCallback(0,null); 
+				checkDatas();
+				if($.cookie("roleId") == "管理员"){
+					$(".table_add").hide();
+					$(".tjkqpz").hide();
+				}
+			});
+			$(".pagination_num select").change(function(){
+				initFlag=true;
+				rows = $(".pagination_num select option:selected").val();
+				PageCallback(0,null); 
+			});
+			//分页查询start
+			function PageCallback(currPage,jq){
+				_data.currPage = currPage + 1,
+				_data.currNum = rows;
+				$.ajax({
+					type:"POST",
+					url: _url,
+					headers:{token:localStorage.getItem("token")},
+					data: _data,
+					dataType:"JSON",
+					success:function(result){
+						console.log(result);
+						if(result.success){
+							if(initFlag){
+								$("#pagePlugins").pagination(result.total,{
+									items_per_page:rows,
+									num_edge_entries:1,
+									num_display_entries:2,
+									callback:PageCallback
+								});
+								initFlag=false;
+							}
+							$(".jilu").text(result.total);
+							$("#tableBox").empty();
+							loadDataList(result.data,result.total);
+							$("#count").html(result.count.count);
+							$("#sum").html(result.count.sum);
+						}else{
+							alert(result.msg);
+						}
+					}
+					,error:function(){
+						alert("系统网络异常");
+					}
+				}); 
+			} 
+			//分页查询end
+			//表格载入数据start
+			function loadDataList(listData,total){
+				var tableTh ='<tr>'+
+					'<th></th>'+
+					'<th>序号</th>'+
+					'<th>服务人员</th>'+
+					'<th>姓名</th>'+
+					'<th>部门全称</th>'+
+//					'<th>二级部门</th>'+
+					'<th>证件号码</th>'+
+					'<th>员工编号</th>'+
+					'<th>考勤城市</th>'+
+					'<th>岗位</th>'+
+					'<th>职级</th>'+
+					'<th>服务类别</th>'+
+					'<th>服务费类别</th>'+
+					'<th>服务费</th>'+
+					'<th>合同止</th>'+
+					'<th>打款主体</th>'+
+					'<th>是否新增人员</th>'+
+					'<th>备注</th>'+
+				'</tr>';
+	
+				$("#tableBox").append(tableTh);
+				var	html="";
+				for(var i=0;i<listData.length;i++){
+					var datas=listData[i];
+					html +=`<tr>
+							<td><input class="del" type="checkbox" name="" value="${datas.FUWUFEI_ID}"/></td>
+							<td>${i+1}</td>
+							<td>${datas.FUWU_JL || ''}</td>
+							<td>${datas.NAME || ''}</td>
+							<td>${datas.FIRST_DEP || ''}</td>
+							<td>${datas.IDCARD || ''}</td>
+							<td>${datas.EMP_NUM || ''}</td>
+							<td>${datas.WORK_CITY || ''}</td>
+							<td>${datas.POST_NAME || ''}</td>
+							<td>${datas.ZHIJI || ''}</td>
+							<td>${datas.RENYUAN_TYPE || ''}</td>
+							<td>${datas.SERVICE_TYPE || ''}</td>
+							<td>${datas.FUWUFEI || ''}</td>
+							<td>${datas.OUTWORK_TIME || ''}</td>
+							<td>${datas.FUWU_BODY || ''}</td>
+							<td>${datas.ISNEW_MAN || ''}</td>
+							<td>${datas.FUWU_BZ || ''}</td>
+						</tr>`;
+//					html += '<tr>'+
+//							'<td><input class="del" type="checkbox" name="" value="'+datas.FUWUFEI_ID+'"/></td>'+
+//							'<td>'+(i+1)+'</td>'+
+//							'<td>'+datas.FUWU_JL+'</td>'+
+//							'<td>'+datas.NAME+'</td>'+
+//							'<td>'+datas.FIRST_DEP+'</td>'+
+////							'<td>'+datas.SECOND_DEP+'</td>'+
+//							'<td>'+datas.IDCARD+'</td>'+
+//							'<td>'+datas.EMP_NUM+'</td>'+
+//							'<td>'+datas.WORK_CITY+'</td>'+
+//							'<td>'+datas.POST_NAME+'</td>'+
+//							'<td>'+datas.ZHIJI+'</td>'+
+//							'<td>'+datas.RENYUAN_TYPE+'</td>'+
+//							'<td>'+datas.SERVICE_TYPE+'</td>'+
+//							'<td>'+datas.FUWUFEI+'</td>'+
+//							'<td>'+datas.OUTWORK_TIME+'</td>'+
+//							'<td>'+datas.FUWU_BODY+'</td>'+
+//							'<td>'+datas.ISNEW_MAN+'</td>'+
+//							'<td>'+datas.FUWU_BZ+'</td>'+
+//						'</tr>';
+				}
+			
+				$("#tableBox").append(html); 
+				
+			}
+			//表格载入数据end
+			
+			//搜索功能
+			function Search(){
+				keyword = $("#keyWord").val();
+				// _data = {"currPage":currPage+1,"currNum":rows,"keywords":keyword,"FIND_RUZHI_STATUS":'2'};
+				_data = {
+					"currPage":currPage+1,
+					"currNum":rows,
+					"keyword":keyword,
+					"zhiji":zhiji,
+					"serviceType":serviceType,
+					"workCity":workCity
+				};
+				console.log(_data);
+				initFlag=true;
+				PageCallback(0);
+			}
+	
+			//筛选
+			function qDselectInformation(){
+				initFlag=true;
+				workCity = $("#workCity").val();
+				keyword=$("#keyword").val();
+				zhiji = $("#zhiji").val();
+				serviceType=$("#serviceType").val();
+				_url=serverPath + '/wks/fuwufei/list';
+				_data = {
+					"currPage":currPage+1,
+					"currNum":rows,
+					"keyword":keyword,
+					"zhiji":zhiji,
+					"serviceType":serviceType,
+					"workCity":workCity
+				};
+				PageCallback(0);
+				closeModal();
+			}
+			
+
+			// 导入数据		
+			function uploadData(_target){
+				var formData = new FormData($("#uploadDataForm")[0]); 
+				var file = $('#uploadDataInput')[0].files[0];
+				console.log(file);
+				if(!file){
+	                 alert("请选择文件");
+	                 return false;
+	            };
+				$.ajax({  
+					url:serverPath + '/wks/fuwufei/readFuWuFeiExcel',
+					headers:{token:localStorage.getItem("token")},
+					type: 'POST',  
+					data: formData,  
+					async: true,  
+					cache: false,  
+					contentType: false,  
+					processData: false,  
+					beforeSend:function(){
+						$("#loading").show();
+					},
+					success: function (returndata) {  
+						alert(returndata.msg); 
+						window.location.reload();
+					},  
+					error: function (returndata) {  
+						alert('系统网络异常！');
+					}  
+				}); 
+			}
+	
+			//检测数据
+			function checkDatas(){
+				$.ajax({
+					type:"post",
+					url:serverPath + "/wks/fuwufei/validate",
+					headers:{token:localStorage.getItem("token")},
+					dataType : "json",
+					success: function(result){
+						console.log(result)
+						if(result.success){
+							alert(result.msg);
+						}else{
+							alert(result.msg);
+						}
+					},
+					error : function(){
+						alert("接口报错！");
+					}
+				});
+			}
+			
+			function showModal(){
+				$(".shade").fadeIn();
+			}
+			function closeModal(){
+				$(".shade").fadeOut();
+				$("#xs")[0].reset();
+			}
+			
+			//生成数据
+			function createData(){
+				if(!confirm("是否确认生成数据?")){
+					return null;
+				}	
+				$.ajax({
+					type:"post",
+					url:serverPath + "/wks/fuwufei/createDataBase",
+					headers:{token:localStorage.getItem("token")},
+					dataType : "json",
+					beforeSend:function(){
+						$("#loading").show();
+					},
+					success: function(result){
+						console.log(result);
+						if(result.success){
+							alert(result.msg);
+							window.location.reload();   
+						}else{
+							alert(result.msg);
+						}
+					},
+					complete: function(){
+				     	$("#loading").hide();
+				    },
+					error : function(){
+						alert("系统网络异常！");
+					}
+				});
+			}
+			
+			//删除数据
+			function delAll(){
+				if(!confirm("是否确认删除?")){
+					return null;
+				}
+				var delDatas = [];
+				$(".del:checked").each(function(){
+					delDatas.push($(this).val());
+				})
+				//console.log(delDatas);
+				
+				$.ajax({
+					type:"post",
+					url:serverPath + "/wks/fuwufei/deleteAll",
+					headers:{token:localStorage.getItem("token")},
+					dataType : "json",
+					data:{"fuwufeiId":delDatas},
+					traditional:true,  //变成数组
+					success: function(result){
+						if(result.success){
+							alert(result.msg);
+							window.location.reload();   
+						}else{
+							alert(result.msg);
+						}
+					},
+					error : function(){
+						alert("系统网络异常！");
+					}
+				});
+			}
+		</script>
+	</body>
+</html>

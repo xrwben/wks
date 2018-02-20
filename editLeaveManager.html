@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="Access-Control-Allow-Origin" content="*">
+		<title>离职管理编辑</title>
+		<link rel="stylesheet" href="css/common.css" />
+		<link rel="stylesheet" href="css/newEmployee.css" />
+		<style>
+			.look{display: none;}
+			.part h3.subTiltle{font-size:16px;font-weight:600;}	
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<div class="header clearfix">
+				<div class="h_nav">
+					<h2>员工详情信息</h2>
+					<p><span>首页</span>/<span>待办事项</span>/<span>离职管理</span>/<span>编辑</span></p>
+				</div>
+				<div class="h_btn">
+					<button id="" class="" onclick="liZhi()">离职提交</button>
+				</div>
+			</div>
+			<div class="main">
+				<ul class="nav clearfix">
+					<li class="hover">基本信息</li>
+				</ul>
+				<form id="myForm">
+					<div class="nav_con">
+						
+						<!--基本信息-->
+						<div class="tab con_baseInfo">
+							<!--离职附件-->
+							<input type="text" class="templet NAME showname" value="" readonly style="border:0;font-size: 24px;font-weight: bold;" />
+							<div class="part part1">
+								<h3>
+									<i style="font-family:'Arial-BoldMT', 'Arial Bold', 'Arial';color:#00CC99;">▼</i>离职附件
+									<img src="images/bianji.png"><span>编辑</span>
+								</h3>
+								<label><input type="checkbox" class="zili"/>自离</label>
+								<div class="upload">
+									<form id="file1">
+										<p class="">
+											<em>*</em>离职申请：
+											<button type="button"><b class="_lzsq LIZHI_SQ">点击上传</b><input id="lzsq" name="11" type="file" accept="image/jpeg,image/png" required onchange="addUpload('11','#lzsq','_lzsq')"/></button>
+											<span class="look" onclick="Look(11)"><img src="images/check.png"/>查看</span>
+										</p>
+										<p class="">
+											<em>*</em>离职审批：
+											<button type="button"><b class="_lzsp LIZHI_SP">点击上传</b><input id="lzsp" name="12" type="file" accept="image/jpeg,image/png" required onchange="addUpload('12','#lzsp','_lzsp')"/></button>
+											<span class="look" onclick="Look(12)"><img src="images/check.png"/>查看</span>
+										</p>
+										<p class="">
+											离职交接：
+											<button type="button"><b class="_lzjj LIZHI_JJ">点击上传</b><input id="lzjj" name="13" type="file" accept="image/jpeg,image/png" onchange="addUpload('13','#lzjj','_lzjj')"/></button>
+											<span class="look" onclick="Look(13)"><img src="images/check.png"/>查看</span>
+										</p>
+									</form>
+								</div>
+							</div>
+							
+							<!--岗位信息-->
+							<div class="part part3 hide">
+								<h3>
+									<i style="font-family:'Arial-BoldMT', 'Arial Bold', 'Arial';color:#00CC99;">▼</i>岗位信息
+									<img src="images/bianji.png"><span>编辑</span>
+								</h3>
+								<div class="part_con">
+									<p>
+										<label><em>*</em>员工编号：</label>
+										<input type="text" class="templet EMP_NUM" name="EMP_NUM" value="自动生成" readonly/>
+									</p>
+									<!--<p>
+										<label><em>*</em>员工状态：</label>
+										<input type="text" class="templet RUZHI_STATUS" name="RUZHI_STATUS" value="离职" readonly/>
+									</p>-->
+									<p>
+										<label><em>*</em>离职类型：</label>
+										<select class="templet LIZHI_TYPE" name="LIZHI_TYPE">
+											<option value="辞职">辞职</option>
+											<option value="自离" selected="selected">自离</option>
+											<option value="辞退">辞退</option>
+											<option value="其它">其它</option>
+										</select>
+									</p>
+									<p>
+										<label><em>*</em>离职审批人：</label>
+										<input id="spr" type="text"  class="templet" name="LIZHI_AGREE_MAN" value="" onchange="judgeSPR()" required/>
+									</p>
+									<p>
+										<label><em>*</em>离职日期：</label>
+										<input type="date" class="templet LIZHI_TIME" name="LIZHI_TIME" value="" required/>
+									</p>
+									<!--<p class="">
+										<label><em>*</em>社保状态：</label>
+										<select class="templet SHEBAO_STATUS" name="SHEBAO_STATUS">
+											<option value="停保" selected="selected">停保</option>
+											<option value="参保">参保</option>
+											<option value="调整" >调整</option>
+										</select>
+									</p>-->
+									<p class="">
+										<label><em>*</em>停保月份：</label>
+										<select class="templet TINGBAO_YF" name="TINGBAO_YF">
+											<option value="本月" selected="selected">本月</option>
+											<option value="下月">下月</option>
+											<option value="未参保">未参保</option>
+										</select>
+									</p>
+									<p>
+										<label>离职备注：</label>
+										<textarea cols="60" rows="5" name="LIZHI_BZ"></textarea>
+									</p>
+								</div>
+							</div>
+						</div>	
+					</div>
+				</form>
+			</div>
+		</div>
+		
+		<style>
+			.showImage{width:100%;/*height:100%;*/background:rgba(0,0,0,0.8);position: fixed;left: 0;top:0;
+				display: none;}
+			.pic{width:95%;margin:5% auto;}
+			.pic img{width: 100%;}
+		</style>
+		<!--查看图片-->
+		<div class="showImage">
+			<div class="pic">
+				<img src="" />
+			</div>
+		</div>
+		
+		<script type="text/javascript" src="js/jquery-1.11.3.min.js" ></script>
+		<script type="text/javascript" src="js/serverURL.js" ></script>
+		<script type="text/javascript" src="js/dateFormat.js" ></script>
+		<script type="text/javascript" src="js/jquery.validate.min.js" ></script>
+		<script type="text/javascript" src="js/messages_zh.js" ></script>
+		<script type="text/javascript" src="js/tab.js" ></script>
+		<script type="text/javascript" src="js/newEmpFormValidate.js" ></script>
+		<script type="text/javascript" src="js/pdfFormValidate.js" ></script>
+		<script type="text/javascript" src="js/jquery.cookie.js" ></script>
+		<script type="text/javascript" src="js/newEmp.js" ></script>
+		<script type="text/javascript" src="js/lookPicture.js" ></script>
+		
+		<script type="text/javascript">
+			var resultData = null;
+			console.log(resultData);
+			$(function(){
+				//判断是否自离
+				$(".zili").click(function(){
+					if($(this).is(":checked")){
+						$(".upload").hide();
+						$(".hide").show();
+					}else{
+						$(".upload").show();
+						$(".hide").hide();
+					}
+				})
+				
+				var _url = window.location.href; //拿到地址
+				var parameter = _url.split("=")[1]; //分割字符创变成数组取得传过来的id
+				$.ajax({
+					type : "post",
+					url :　serverPath+"/wks/employee/findById",
+					headers:{token:localStorage.getItem("token")},
+					data : {"EMPLOYEE_ID":parameter},
+					dataType:"JSON",
+					success : function(result){
+						resultData = result;
+						console.log(resultData);
+						if(result.success == "token"){
+							alert(result.msg);
+							window.parent.window.location.href = "login.html";
+						}else if(result.success){
+							if(result.data.TOWORK_TIME && result.data.OUTWORK_TIME){
+								//console.log(result.data.TOWORK_TIME);
+								result.data.TOWORK_TIME = new Date(result.data.TOWORK_TIME).format("yyyy-MM-dd");
+								result.data.OUTWORK_TIME = new Date(result.data.OUTWORK_TIME).format("yyyy-MM-dd");
+								//console.log(result.data.TOWORK_TIME);
+							}
+							
+							for(var prop in result.data){
+								var txt = $("."+prop).val(result.data[prop]);
+							}
+							//判断文件是否存在
+							fileExist();
+						}else{
+							alert(result.msg);
+						}
+					},
+					error : function(){
+						alert("系统网络异常！");
+					}
+				})	
+			});
+			
+			//判断文件是否存在
+			function fileExist(){
+				if(resultData.data.IDCARD_ZHE){
+					$(".IDCARD_ZHE").text("上传完成").parent().css({"background":"#eee"});
+				}
+				if(resultData.data.IDCARD_FAN){
+					$(".IDCARD_FAN").text("上传完成").parent().css({"background":"#eee"});
+				}
+				if(resultData.data.BANK_SIG){
+					$(".BANK_SIG").text("上传完成").parent().css({"background":"#eee"});
+				}
+				if(resultData.data.TOWORK_COM){
+					$(".TOWORK_COM").text("上传完成").parent().css({"background":"#eee"});
+				}
+				if(resultData.data.OUTWORK_PRO){
+					$(".OUTWORK_PRO").text("上传完成").parent().css({"background":"#eee"});
+				}
+				if(resultData.data.GRADUATION_CARD){
+					$(".GRADUATION_CARD").text("上传完成").parent().css({"background":"#eee"});
+				}
+				if(resultData.data.OTHER1){
+					$(".OTHER1").text("上传完成").parent().css({"background":"#eee"});
+				}
+				if(resultData.data.OTHER2){
+					$(".OTHER2").text("上传完成").parent().css({"background":"#eee"});
+				}
+//				if(resultData.data.LIZHI_SQ){
+//					$(".LIZHI_SQ").text("上传完成").parent().css({"background":"#eee"});
+//				}
+//				if(resultData.data.LIZHI_SP){
+//					$(".LIZHI_SP").text("上传完成").parent().css({"background":"#eee"});
+//				}
+//				if(resultData.data.LIZHI_JJ){
+//					$(".LIZHI_JJ").text("上传完成").parent().css({"background":"#eee"});
+//				}
+			}
+							
+			//提交离职数据
+		    function liZhi(){
+		    	if(validFormPdf().form()) {
+			        //通过表单验证，以下编写自己的代码
+			        console.log("生成文件!");
+					var fd = new FormData($("#myForm")[0]);
+					fd.append("EMPLOYEE_ID",resultData.data.EMPLOYEE_ID);
+					fd.append("EMPFILE_ID",resultData.data.EMPFILE_ID);
+					console.log(resultData.data.EMPFILE_ID);
+			    	$.ajax({
+			    		type:"post",
+			    		url:serverPath+"/wks/employee/lizhi",
+			    		headers:{token:localStorage.getItem("token")},
+			    		data: fd,
+			    		dataType : "json",
+						cache : false,
+						contentType :　false,
+						processData: false,
+			    		success: function(result){
+			    			console.log(result);
+			    			if(result.success == "token"){
+								alert(result.msg);
+								window.parent.window.location.href = "login.html";
+							}else if(result.success){
+								alert(result.msg);
+			    				window.location.href = "employeeInformation.html";
+			    			}else{
+			    				alert(result.msg);
+			    			}
+			    		},
+			    		error: function(){
+			    			console.log("系统网络异常!");
+			    		}
+			    	});
+			    } else {
+			    	alert("请完善离职信息！");
+			        //校验不通过，什么都不用做，校验信息已经正常显示在表单上
+			    }
+		    }
+			
+			//判断是否存在审批人
+			function judgeSPR(){
+				$.ajax({
+					type:"post",
+					url: serverPath + "/wks/employee/findByName",
+					headers:{token:localStorage.getItem("token")},
+					data:{"NAME":$("#spr").val()},
+					dataType:"json",
+					success: function(result){
+						if(result.success == "token"){
+							alert(result.msg);
+							window.parent.window.location.href = "login.html";
+						}else if(result.success && result.msg == "no"){
+							alert("审批人输错或不存在，请重新输入！");
+						}
+					},
+					error: function(){
+						alert("系统网络异常！");
+					}
+				});
+			}
+		</script>
+	</body>
+</html>

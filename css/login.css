@@ -1,0 +1,40 @@
+#login_header{
+	height:120px;
+	background-color: #37C1A0;
+	color:#fff;
+	font-size: 40px;
+	line-height:120px;
+	text-indent: 5%;
+	}
+#login_logo{
+	text-align:center;
+	padding:20px 0px;
+}
+#login_form{
+	text-align:center;
+}
+#login_form > form > div > input{
+	width: 340px; 
+	height:30px;
+	margin-top:10px;
+	text-indent: 10px;
+	border:1px solid #ccc;
+}
+#login_form .commit > input{
+	width: 350px; 
+	height:35px;
+	border:none;
+	border-radius: 5px;
+	background-color: #37C1A0;
+	color:#fff;
+	font-size: 20px;
+	margin-top:20px;
+	cursor: pointer;
+}
+#footer_copyright{
+	width: 100%;
+	text-align: center;
+	position: fixed;
+	bottom: 20px;
+	color:#37C1A0;
+}

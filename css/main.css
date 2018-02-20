@@ -1,0 +1,50 @@
+/*首页样式*/
+#header ul li{width:25%;/*height:80px;*/float:left;list-style: none;
+	/*margin-right:3%;*/text-align: center;}
+#header ul li:nth-child(1) > div{background:rgba(0, 157, 223, 1);}
+#header ul li:nth-child(2) > div {background:rgba(55, 193, 160, 1);}
+#header ul li:nth-child(3) > div{background:rgba(255, 153, 51, 1);}
+#header ul li:nth-child(4) > div{background:rgba(51, 204, 204, 1);}
+#header ul li > div{
+	margin:10px;padding:20px;
+}
+#header ul li p{
+	font-size: 16px;
+	color:rgba(255,255,255,0.8);
+}
+
+#main{margin-top:30px;}
+#main ul{}
+#main > ul > li{width:33.3%;float:left;}
+#main > ul > li > div{
+	height:500px;
+	margin:10px;
+	padding:20px;
+	background: #fff;
+}
+#main > ul > li > div > h2{
+	font-size: 18px;
+	border-bottom: 1px solid #ddd;
+	line-height:50px;
+}
+#main > ul > li > div > ul > li{
+	/*line-height: 35px;*/
+	margin-top:15px;
+}
+#main > ul > li > div > ul > li i{
+	width:10px;
+	height:10px;
+	border:1px solid rgba(0,0,0,0.8);
+	border-radius: 50%;
+	display: block;
+	float:left;
+	margin:4px 10px 0 0;
+}
+
+#main > ul > li > div > ul > li a{
+	color:red;
+	margin:0px 5px;
+	font-size: 16px;
+	font-weight: 700;
+}
+#chart{width:100%;}
